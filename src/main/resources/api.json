@@ -1,0 +1,4 @@
+{
+  "host" : "localhost:8085",
+  "login-post" : "/login"
+}
