@@ -1,6 +1,7 @@
 package by.issoft.kholodok.service.impl;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import by.issoft.kholodok.dao.RoleDAO;
@@ -68,6 +69,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByLogin(String login) {
         return userDAO.findByLogin(login);
+    }
+
+    @Override
+    public List<User> findAll() {
+       return userDAO.findAll();
     }
 
     private void fillUserWithAuthData(UserAuthData userAuthData, RoleEnum roleEnum) {

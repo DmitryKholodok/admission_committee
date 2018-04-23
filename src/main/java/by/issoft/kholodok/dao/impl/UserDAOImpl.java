@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.List;
 
 @Repository
 public class UserDAOImpl implements UserDAO {
@@ -34,8 +35,9 @@ public class UserDAOImpl implements UserDAO {
 
     @Transactional
     @Override
-    public Collection<User> findAll() {
-        return null;
+    public List<User> findAll() {
+        Query query = sessionFactory.getCurrentSession().createQuery(userQueryProvider.findAll());
+        return (List<User>) query.getResultList();
     }
 
     @Transactional

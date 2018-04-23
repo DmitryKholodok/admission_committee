@@ -8,4 +8,8 @@ public class HqlUserQueryProvider implements UserQueryProvider {
         return "from User as user " +
                 "where user.userAuthData.login = '" + login + "'";
     }
+
+    public String findAll() {
+        return "from User";
+    }
 }

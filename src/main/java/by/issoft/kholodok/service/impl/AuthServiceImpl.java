@@ -7,6 +7,9 @@ import by.issoft.kholodok.model.RoleEnum;
 import by.issoft.kholodok.model.User;
 import by.issoft.kholodok.model.UserAuthData;
 import by.issoft.kholodok.service.AuthService;
+import by.issoft.kholodok.service.RightsValidator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,8 +24,13 @@ import java.util.stream.Stream;
 @Service
 public class AuthServiceImpl implements AuthService {
 
+    private static final Logger LOGGER = LogManager.getLogger(AuthServiceImpl.class);
+
     @Autowired
     private UserAuthDataDAO userAuthDataDAO;
+
+    @Autowired
+    private RightsValidator rightsValidator;
 
     @Override
     public boolean isUserAnonym() {
@@ -67,6 +75,18 @@ public class AuthServiceImpl implements AuthService {
         userAuthDataDAO.update(userAuthData);
     }
 
+    @Override
+    public boolean isClientCanGetUserData(User user) throws AuthServiceException {
+        RoleEnum userRoleEnum = retrieveUserRoleEnum(SecurityContextHolder.getContext().getAuthentication());
+        RoleEnum requiredRoleEnum = retrieveUserRoleEnum(user);
+        if (rightsValidator.isRoleEnumValid(userRoleEnum, requiredRoleEnum)) {
+            return true;
+        } else {
+            LOGGER.error(retrieveForbiddenLogMsg(userRoleEnum, requiredRoleEnum));
+            return false;
+        }
+    }
+
     private boolean isValidRoleCollectionSize(final Collection<?> roleCollection) {
         final int ROLE_COUNT_AT_USER = 1;
         return roleCollection.size() >= ROLE_COUNT_AT_USER;
@@ -78,6 +98,10 @@ public class AuthServiceImpl implements AuthService {
                 .findFirst()
                 .get()
                 .substring(ROLE_PREFIX_SIZE));
+    }
+
+    private String retrieveForbiddenLogMsg(RoleEnum currRoleEnum, RoleEnum requiredRoleEnum) {
+        return "Forbidden: client has role " + currRoleEnum.getValue() + ", but required at least " + requiredRoleEnum.getValue();
     }
 
 }

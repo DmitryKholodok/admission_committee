@@ -25,8 +25,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
+
 @RestController
-@RequestMapping(value = "/user")
+@RequestMapping(value = "/users")
 public class UserController {
 
     private final static Logger LOGGER = LogManager.getLogger(UserController.class);
@@ -35,14 +37,10 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-    private RightsValidator rightsValidator;
-
-    @Autowired
     private AuthService authService;
 
     @Autowired
     private UserValidator userValidator;
-
 
     @PostMapping
     public ResponseEntity<Void> addUser(@RequestBody User user, UriComponentsBuilder ucBuilder) {
@@ -73,13 +71,9 @@ public class UserController {
         try {
             User user = userService.findById(id);
             if (user != null) {
-                RoleEnum userRoleEnum = authService.retrieveUserRoleEnum(SecurityContextHolder.getContext().getAuthentication());
-                RoleEnum requiredRoleEnum = authService.retrieveUserRoleEnum(user);
-                if (rightsValidator.isRoleEnumValid(userRoleEnum, requiredRoleEnum)) {
-                    LOGGER.debug("Getting the user with id: {}", id);
+                if (authService.isClientCanGetUserData(user)) {
                     responseEntity = new ResponseEntity<>(user, HttpStatus.OK);
                 } else {
-                    LOGGER.debug(retrieveForbiddenLogMsg(userRoleEnum, requiredRoleEnum));
                     responseEntity = new ResponseEntity<>(HttpStatus.FORBIDDEN);
                 }
             } else {
@@ -100,7 +94,6 @@ public class UserController {
         try {
             RoleEnum userRoleEnum = authService.retrieveUserRoleEnum(SecurityContextHolder.getContext().getAuthentication());
             if (!authService.isUserAdmin(userRoleEnum)) {
-                LOGGER.debug(retrieveForbiddenLogMsg(userRoleEnum, RoleEnum.ADMIN));
                 responseEntity = new ResponseEntity<>(HttpStatus.FORBIDDEN);
             } else {
                 LOGGER.debug("Deleting the user with id: {}", id);
@@ -135,9 +128,7 @@ public class UserController {
                     if (currUser.getId() != id) {
 
                         // if the user updates not himself, we should validate his rights
-                        RoleEnum userRoleEnum = authService.retrieveUserRoleEnum(SecurityContextHolder.getContext().getAuthentication());
-                        RoleEnum requiredRoleEnum = authService.retrieveUserRoleEnum(user);
-                        if (!rightsValidator.isRoleEnumValid(userRoleEnum, requiredRoleEnum)) {
+                        if (!authService.isClientCanGetUserData(user)) {
                             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
                         }
                     }
@@ -158,8 +149,24 @@ public class UserController {
         return responseEntity;
     }
 
-    private String retrieveForbiddenLogMsg(RoleEnum currRoleEnum, RoleEnum requiredRoleEnum) {
-        return "Forbidden: client has role " + currRoleEnum.getValue() + ", but required at least " + requiredRoleEnum.getValue();
+    @GetMapping
+    public ResponseEntity<List<User>> findAllUsers() {
+        ResponseEntity<List<User>> responseEntity;
+        try {
+            RoleEnum userRoleEnum = authService.retrieveUserRoleEnum(SecurityContextHolder.getContext().getAuthentication());
+            if (authService.isUserAdmin(userRoleEnum)) {
+                List<User> userList = userService.findAll();
+                responseEntity = new ResponseEntity<>(userList, HttpStatus.OK);
+            } else {
+                responseEntity = new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
+        }
+        catch (AuthServiceException e) {
+            LOGGER.fatal(e);
+            throw new RuntimeException(e);
+        }
+
+        return responseEntity;
     }
 
 }
