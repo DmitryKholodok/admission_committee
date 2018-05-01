@@ -1,6 +1,6 @@
 package by.issoft.kholodok.dao.query;
 
-public interface UserAuthDataQueryProvider {
+public interface UserAuthQueryProvider {
 
     String findByLogin(String login);
 

@@ -10,7 +10,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -21,13 +20,14 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
-@Table(name = "certificate")
-public class Certificate {
+@Table(name = "basic_certificate")
+public class BasicCertificate {
 
     @Id
-    @Column(name = "certificate_id", nullable = false)
+    @Column(name = "bc_id")
     private int id;
 
+    @NotNull
     @Range(min = 0, max = 100)
     @Column(name = "point")
     private int point;
@@ -37,13 +37,10 @@ public class Certificate {
     @Temporal(value = TemporalType.DATE)
     private Date dateOfIssue;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private EnrolleeData enrolleeData;
-
-    @OneToOne
-    @JoinColumn(name = "subject_id")
-    private Subject subject;
 
 }

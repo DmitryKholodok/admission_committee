@@ -6,10 +6,6 @@ public class HqlUserQueryProvider implements UserQueryProvider {
 
     public String findByLogin(String login) {
         return "from User as user " +
-                "where user.userAuthData.login = '" + login + "'";
-    }
-
-    public String findAll() {
-        return "from User";
+                "where user.userAuth.login = '" + login + "'";
     }
 }

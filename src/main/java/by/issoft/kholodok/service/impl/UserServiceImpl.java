@@ -1,22 +1,22 @@
 package by.issoft.kholodok.service.impl;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import by.issoft.kholodok.dao.RoleDAO;
-import by.issoft.kholodok.dao.UserAuthDataDAO;
+import by.issoft.kholodok.dao.UserAuthDAO;
 import by.issoft.kholodok.dao.UserDAO;
 import by.issoft.kholodok.exception.UserServiceException;
-import by.issoft.kholodok.model.Role;
-import by.issoft.kholodok.model.RoleEnum;
-import by.issoft.kholodok.model.User;
-import by.issoft.kholodok.model.UserAuthData;
+import by.issoft.kholodok.model.role.Role;
+import by.issoft.kholodok.model.role.RoleEnum;
+import by.issoft.kholodok.model.user.User;
+import by.issoft.kholodok.model.user.UserAuth;
 import by.issoft.kholodok.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -31,18 +31,19 @@ public class UserServiceImpl implements UserService {
     private UserDAO userDAO;
 
     @Autowired
-    private UserAuthDataDAO userAuthDataDAO;
+    private UserAuthDAO userAuthDAO;
 
     @Override
+    @Transactional
     public void save(User user) throws UserServiceException {
-        UserAuthData userAuthData = user.getUserAuthData();
-        if (userAuthDataDAO.findByLogin(userAuthData.getLogin()) != null) {
+        UserAuth userAuth = user.getUserAuth();
+        if (userAuthDAO.findByLogin(userAuth.getLogin()) != null) {
             throw new UserServiceException("Current login already exists!");
         }
-        userAuthData.setUser(user);
+        userAuth.setUser(user);
 
         // by default, all new users have enrollee authentication data
-        fillUserWithAuthData(userAuthData, RoleEnum.ENROLLEE);
+        fillUserWithAuthData(userAuth, RoleEnum.ENROLLEE);
         userDAO.save(user);
     }
 
@@ -71,17 +72,12 @@ public class UserServiceImpl implements UserService {
         return userDAO.findByLogin(login);
     }
 
-    @Override
-    public List<User> findAll() {
-       return userDAO.findAll();
-    }
-
-    private void fillUserWithAuthData(UserAuthData userAuthData, RoleEnum roleEnum) {
+    private void fillUserWithAuthData(UserAuth userAuth, RoleEnum roleEnum) {
         final Set<Role> userRoleSet = new HashSet<>();
         final Role role = roleDAO.findRoleByName(roleEnum.getValue());
         userRoleSet.add(role);
-        userAuthData.setRoleSet(userRoleSet);
-        userAuthData.setPassword(passwordEncoder.encode(userAuthData.getPassword()));
+        userAuth.setRoleSet(userRoleSet);
+        userAuth.setPassword(passwordEncoder.encode(userAuth.getPassword()));
     }
 
 }

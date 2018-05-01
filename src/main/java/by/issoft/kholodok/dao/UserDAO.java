@@ -1,13 +1,13 @@
 package by.issoft.kholodok.dao;
 
-import by.issoft.kholodok.model.User;
+import by.issoft.kholodok.model.user.User;
 
-import java.util.List;
+import java.util.Collection;
 
 public interface UserDAO {
 
     User findById(int id);
-    List<User> findAll();
+    Collection<User> findAll();
     User findByLogin(String login);
     void save(User user);
     boolean deleteById(int id);

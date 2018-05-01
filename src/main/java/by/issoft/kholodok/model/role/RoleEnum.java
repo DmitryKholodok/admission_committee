@@ -1,4 +1,4 @@
-package by.issoft.kholodok.model;
+package by.issoft.kholodok.model.role;
 
 import lombok.Getter;
 
@@ -12,7 +12,6 @@ public enum RoleEnum {
 
     private String value;
     private int priority;
-
 
     RoleEnum(String value, int priority) {
         this.value = value;

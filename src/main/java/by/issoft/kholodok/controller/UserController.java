@@ -1,20 +1,18 @@
 package by.issoft.kholodok.controller;
 
-import by.issoft.kholodok.exception.AuthServiceException;
+import by.issoft.kholodok.exception.RoleServiceException;
 import by.issoft.kholodok.exception.UserServiceException;
-import by.issoft.kholodok.model.RoleEnum;
-import by.issoft.kholodok.model.User;
-import by.issoft.kholodok.service.AuthService;
-import by.issoft.kholodok.service.RightsValidator;
+import by.issoft.kholodok.model.role.Role;
+import by.issoft.kholodok.service.RoleService;
 import by.issoft.kholodok.service.UserService;
-import by.issoft.kholodok.validator.UserValidator;
+import by.issoft.kholodok.model.user.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,9 +21,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.List;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/users")
@@ -37,24 +34,19 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-    private AuthService authService;
-
-    @Autowired
-    private UserValidator userValidator;
+    private RoleService roleService;
 
     @PostMapping
-    public ResponseEntity<Void> addUser(@RequestBody User user, UriComponentsBuilder ucBuilder) {
+    public ResponseEntity<Void> addUser(@Valid @RequestBody User user, BindingResult bindingResult) {
         ResponseEntity<Void> responseEntity;
         try {
-            if (userValidator.isValidUser(user)) {
+            if (bindingResult.hasErrors()) {
+                bindingResult.getAllErrors().forEach(x -> LOGGER.error(x.toString()));
+                responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            } else {
                 LOGGER.info("Adding a new  user");
                 userService.save(user);
-                HttpHeaders headers = new HttpHeaders();
-                headers.setLocation(ucBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri());
-                responseEntity = new ResponseEntity<>(headers, HttpStatus.CREATED);
-            } else {
-                LOGGER.error( "User has invalid fields");
-                responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                responseEntity = new ResponseEntity<>(HttpStatus.CREATED);
             }
         } catch (UserServiceException e) {
             LOGGER.error(e);
@@ -69,18 +61,29 @@ public class UserController {
 
         ResponseEntity<User> responseEntity;
         try {
-            User user = userService.findById(id);
-            if (user != null) {
-                if (authService.isClientCanGetUserData(user)) {
-                    responseEntity = new ResponseEntity<>(user, HttpStatus.OK);
-                } else {
-                    responseEntity = new ResponseEntity<>(HttpStatus.FORBIDDEN);
-                }
-            } else {
+            User requestedUser = userService.findById(id);
+            if (requestedUser == null) {
                 responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            } else {
+                org.springframework.security.core.userdetails.User principal =
+                        (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+                // Whether the user gets himself
+                User currUser = userService.findByLogin(principal.getUsername());
+                if (currUser.getId() != id) {
+
+                    Role userRole = roleService.retrieveUserRole(SecurityContextHolder.getContext().getAuthentication());
+                    Role requiredRole = roleService.retrieveUserRole(requestedUser);
+                    if (roleService.compare(userRole, requiredRole) < 1) {
+                        LOGGER.debug("User with role " + userRole.getName() + " tried to get the user with role " +
+                                requiredRole.getName() + ". Result - FORBIDDEN");
+                        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+                    }
+                }
+                LOGGER.debug("Getting the user with id: {}", id);
+                responseEntity = new ResponseEntity<>(requestedUser, HttpStatus.OK);
             }
-        }
-        catch (AuthServiceException e) {
+        } catch (RoleServiceException e) {
             LOGGER.fatal(e);
             throw new RuntimeException(e);
         }
@@ -92,30 +95,33 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable int id) {
         ResponseEntity<Void> responseEntity;
         try {
-            RoleEnum userRoleEnum = authService.retrieveUserRoleEnum(SecurityContextHolder.getContext().getAuthentication());
-            if (!authService.isUserAdmin(userRoleEnum)) {
-                responseEntity = new ResponseEntity<>(HttpStatus.FORBIDDEN);
-            } else {
+            Role userRole = roleService.retrieveUserRole(SecurityContextHolder.getContext().getAuthentication());
+            if (roleService.isRoleAdmin(userRole)) {
                 LOGGER.debug("Deleting the user with id: {}", id);
                 boolean isUserDeleted = userService.deleteById(id);
                 responseEntity = (isUserDeleted) ?
                         new ResponseEntity<>(HttpStatus.OK) :
                         new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            } else {
+                LOGGER.debug("User with role " + userRole.getName() +
+                        " tried to delete the user, but only admins can do it. Result - FORBIDDEN");
+                responseEntity = new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
-        } catch (AuthServiceException e) {
-            LOGGER.fatal(e);
-            throw new RuntimeException(e);
+        } catch (RoleServiceException e) {
+            LOGGER.error(e);
+            responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
         return responseEntity;
     }
 
     @PutMapping(value = "{id}")
-    public ResponseEntity<Void> updateUser(@PathVariable int id, @RequestBody User user) {
-
+    public ResponseEntity<Void> updateUser(@PathVariable int id, @RequestBody @Valid User user, BindingResult bindingResult) {
         ResponseEntity<Void> responseEntity;
         try {
-            if (userValidator.isValidUser(user)) {
+            if (bindingResult.hasErrors()) {
+                bindingResult.getAllErrors().forEach(x -> LOGGER.error(x.toString()));
+                responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            } else {
                 User updatedUser = userService.findById(id);
                 if (updatedUser == null) {
                     responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -128,7 +134,11 @@ public class UserController {
                     if (currUser.getId() != id) {
 
                         // if the user updates not himself, we should validate his rights
-                        if (!authService.isClientCanGetUserData(user)) {
+                        Role userRole = roleService.retrieveUserRole(SecurityContextHolder.getContext().getAuthentication());
+                        Role requiredRole = roleService.retrieveUserRole(user);
+                        if (roleService.compare(userRole, requiredRole) < 1) {
+                            LOGGER.debug("User with role " + userRole.getName() + " tried to update the user with role " +
+                                    requiredRole.getName() + ". Result - FORBIDDEN");
                             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
                         }
                     }
@@ -137,35 +147,11 @@ public class UserController {
                     userService.update(user);
                     responseEntity = new ResponseEntity<>(HttpStatus.OK);
                 }
-            } else {
-                LOGGER.error("User has invalid fields");
-                responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-        } catch (AuthServiceException e) {
-            LOGGER.fatal(e);
-            throw new RuntimeException(e);
+        } catch (RoleServiceException e) {
+            LOGGER.error(e);
+            responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        return responseEntity;
-    }
-
-    @GetMapping
-    public ResponseEntity<List<User>> findAllUsers() {
-        ResponseEntity<List<User>> responseEntity;
-        try {
-            RoleEnum userRoleEnum = authService.retrieveUserRoleEnum(SecurityContextHolder.getContext().getAuthentication());
-            if (authService.isUserAdmin(userRoleEnum)) {
-                List<User> userList = userService.findAll();
-                responseEntity = new ResponseEntity<>(userList, HttpStatus.OK);
-            } else {
-                responseEntity = new ResponseEntity<>(HttpStatus.FORBIDDEN);
-            }
-        }
-        catch (AuthServiceException e) {
-            LOGGER.fatal(e);
-            throw new RuntimeException(e);
-        }
-
         return responseEntity;
     }
 

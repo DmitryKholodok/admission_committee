@@ -26,8 +26,8 @@
                     <url>jdbc:mysql://localhost:3306/adcom?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;
                         connectionCollation=utf8_general_ci&amp;characterSetResults=UTF-8</url>
                     <baseDir>db/migration</baseDir>
-                    <user>dmitry</user>
-                    <password>dmitry</password>
+                    <user>root</user>
+                    <password>root</password>
                 </configuration>
             </plugin>
         </plugins>
@@ -48,6 +48,7 @@
         <jackson.version>2.9.4</jackson.version>
         <jwt.v>0.9.0</jwt.v>
         <lombok.v>1.16.18</lombok.v>
+        <hibernate.validator.v>5.2.4.Final</hibernate.validator.v>
 
     </properties>
 
@@ -165,6 +166,13 @@
             <version>${lombok.v}</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate.validator.v}</version>
+        </dependency>
+
 
     </dependencies>
 

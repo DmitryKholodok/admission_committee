@@ -2,7 +2,7 @@ package by.issoft.kholodok.dao.impl;
 
 import by.issoft.kholodok.dao.RoleDAO;
 import by.issoft.kholodok.dao.query.RoleQueryProvider;
-import by.issoft.kholodok.model.Role;
+import by.issoft.kholodok.model.role.Role;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;

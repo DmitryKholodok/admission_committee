@@ -2,7 +2,7 @@ package by.issoft.kholodok.dao.impl;
 
 import by.issoft.kholodok.dao.UserDAO;
 import by.issoft.kholodok.dao.query.UserQueryProvider;
-import by.issoft.kholodok.model.User;
+import by.issoft.kholodok.model.user.User;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-import java.util.List;
 
 @Repository
 public class UserDAOImpl implements UserDAO {
@@ -35,9 +34,8 @@ public class UserDAOImpl implements UserDAO {
 
     @Transactional
     @Override
-    public List<User> findAll() {
-        Query query = sessionFactory.getCurrentSession().createQuery(userQueryProvider.findAll());
-        return (List<User>) query.getResultList();
+    public Collection<User> findAll() {
+        return null;
     }
 
     @Transactional

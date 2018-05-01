@@ -1,6 +1,7 @@
 package by.issoft.kholodok.model;
 
-import javax.persistence.Entity;
+import by.issoft.kholodok.model.user.User;
+
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -17,8 +18,5 @@ public class Statement {
     private User user;
 
     private User operator;
-
-
-
 
 }

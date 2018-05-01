@@ -1,4 +1,4 @@
-package by.issoft.kholodok.model;
+package by.issoft.kholodok.model.role;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -14,18 +14,19 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @Entity
-@Table(name = "subject")
-public class Subject {
+@Table(name = "role")
+public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "subject_id")
+    @Column(name = "role_id")
     private int id;
 
     @NotNull
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     private String name;
 
-    public Subject() {}
+    public Role() {
+    }
 
 }

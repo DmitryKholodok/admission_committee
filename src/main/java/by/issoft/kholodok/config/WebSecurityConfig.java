@@ -4,9 +4,7 @@ import by.issoft.kholodok.auth.RestAuthenticationEntryPoint;
 import by.issoft.kholodok.auth.service.UserDetailsServiceImpl;
 import by.issoft.kholodok.auth.filter.JwtAuthenticationFilter;
 import by.issoft.kholodok.auth.filter.JwtAuthorizationFilter;
-
-import by.issoft.kholodok.model.RoleEnum;
-import by.issoft.kholodok.service.RightsValidator;
+import by.issoft.kholodok.model.role.RoleEnum;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -47,10 +45,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint()).and()
                 .authorizeRequests()
-                    .antMatchers("/", "/login", "/signup").permitAll()
-                    .antMatchers("/user/**").permitAll() // post request for registration
-//                    .antMatchers("/user/**").hasAnyAuthority(
-//                            RoleEnum.ENROLLEE.getValue(), RoleEnum.OPERATOR.getValue(), RoleEnum.ADMIN.getValue())
+                    .antMatchers("/", "/login").permitAll()
+                    .antMatchers("/users").permitAll()
+                    .antMatchers("/users/**", "/auth/**")
+                        .hasAnyAuthority(
+                                RoleEnum.ENROLLEE.getValue(),
+                                RoleEnum.OPERATOR.getValue(),
+                                RoleEnum.ADMIN.getValue())
+                    .antMatchers("/enrollees**")
+                        .hasAnyAuthority(
+                                RoleEnum.OPERATOR.getValue(),
+                                RoleEnum.ADMIN.getValue())
                     .anyRequest().authenticated().and()
                 .addFilter(authorizationFilter())
                 .addFilterBefore(authenticationFilter(), authorizationFilter().getClass());
@@ -68,11 +73,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
-    }
-
-    @Bean
-    public RightsValidator rightsValidator() {
-        return new RightsValidator();
     }
 
     @Bean

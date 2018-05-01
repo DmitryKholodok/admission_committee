@@ -1,8 +1,8 @@
 package by.issoft.kholodok.dao.impl;
 
-import by.issoft.kholodok.dao.UserAuthDataDAO;
-import by.issoft.kholodok.dao.query.UserAuthDataQueryProvider;
-import by.issoft.kholodok.model.UserAuthData;
+import by.issoft.kholodok.dao.UserAuthDAO;
+import by.issoft.kholodok.dao.query.UserAuthQueryProvider;
+import by.issoft.kholodok.model.user.UserAuth;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,25 +10,25 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public class UserAuthDataDAOImpl implements UserAuthDataDAO {
+public class UserAuthDAOImpl implements UserAuthDAO {
 
     @Autowired
     private SessionFactory sessionFactory;
 
     @Autowired
-    private UserAuthDataQueryProvider userAuthDataQueryProvider;
+    private UserAuthQueryProvider userAuthDataQueryProvider;
 
     @Override
     @Transactional
-    public UserAuthData findByLogin(String login) {
+    public UserAuth findByLogin(String login) {
         Query query =
                 sessionFactory.getCurrentSession().createQuery(userAuthDataQueryProvider.findByLogin(login));
-        return (UserAuthData) query.uniqueResult();
+        return (UserAuth) query.uniqueResult();
     }
 
     @Override
     @Transactional
-    public void update(UserAuthData userAuthData) {
+    public void update(UserAuth userAuthData) {
         sessionFactory.getCurrentSession().update(userAuthData);
     }
 }

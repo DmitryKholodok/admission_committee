@@ -1,6 +1,6 @@
 package by.issoft.kholodok.dao;
 
-import by.issoft.kholodok.model.Role;
+import by.issoft.kholodok.model.role.Role;
 
 public interface RoleDAO {
 

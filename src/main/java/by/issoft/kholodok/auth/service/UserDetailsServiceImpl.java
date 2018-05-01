@@ -1,8 +1,8 @@
 package by.issoft.kholodok.auth.service;
 
-import by.issoft.kholodok.dao.UserAuthDataDAO;
-import by.issoft.kholodok.model.Role;
-import by.issoft.kholodok.model.UserAuthData;
+import by.issoft.kholodok.dao.UserAuthDAO;
+import by.issoft.kholodok.model.role.Role;
+import by.issoft.kholodok.model.user.UserAuth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,12 +16,12 @@ import java.util.Set;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    private UserAuthDataDAO userAuthDataDAO;
+    private UserAuthDAO userAuthDAO;
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
 
-        final UserAuthData userAuthData = userAuthDataDAO.findByLogin(login);
+        final UserAuth userAuthData = userAuthDAO.findByLogin(login);
         if (userAuthData == null) {
             throw new UsernameNotFoundException("Login " + login + " was not found!");
         }
