@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/auth")
+@RequestMapping(value = "/api/auth")
 public class UserAuthController {
 
     private static final Logger LOGGER = LogManager.getLogger(UserAuthController.class);

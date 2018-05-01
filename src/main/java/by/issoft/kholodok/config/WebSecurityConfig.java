@@ -4,6 +4,7 @@ import by.issoft.kholodok.auth.RestAuthenticationEntryPoint;
 import by.issoft.kholodok.auth.service.UserDetailsServiceImpl;
 import by.issoft.kholodok.auth.filter.JwtAuthenticationFilter;
 import by.issoft.kholodok.auth.filter.JwtAuthorizationFilter;
+import by.issoft.kholodok.model.role.Role;
 import by.issoft.kholodok.model.role.RoleEnum;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,9 +53,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                                 RoleEnum.ENROLLEE.getValue(),
                                 RoleEnum.OPERATOR.getValue(),
                                 RoleEnum.ADMIN.getValue())
-                    .antMatchers("/enrollees**")
+                    .antMatchers("/enrollees/**")
                         .hasAnyAuthority(
                                 RoleEnum.OPERATOR.getValue(),
+                                RoleEnum.ADMIN.getValue())
+                    .antMatchers("/api/operator/**")
+                        .hasAnyAuthority(
+                                RoleEnum.OPERATOR.getValue(),
+                                RoleEnum.ADMIN.getValue())
+                    .antMatchers("/api/admin/**")
+                        .hasAnyAuthority(
                                 RoleEnum.ADMIN.getValue())
                     .anyRequest().authenticated().and()
                 .addFilter(authorizationFilter())

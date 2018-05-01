@@ -1,12 +1,14 @@
 package by.issoft.kholodok.service.impl;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import by.issoft.kholodok.dao.RoleDAO;
 import by.issoft.kholodok.dao.UserAuthDAO;
 import by.issoft.kholodok.dao.UserDAO;
 import by.issoft.kholodok.exception.UserServiceException;
+import by.issoft.kholodok.model.PageAmount;
 import by.issoft.kholodok.model.role.Role;
 import by.issoft.kholodok.model.role.RoleEnum;
 import by.issoft.kholodok.model.user.User;
@@ -70,6 +72,26 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByLogin(String login) {
         return userDAO.findByLogin(login);
+    }
+
+    @Override
+    public List<User> findByRoleAndPageAmount(Role role, PageAmount pageAmount) {
+        return userDAO.findByRoleAndPageAmount(role, pageAmount);
+    }
+
+    @Override
+    public int getUsersCountByRole(Role role) {
+        return userDAO.getUsersCountByRole(role);
+    }
+
+    @Override
+    public List<User> findAllByPageAmount(PageAmount pageAmount) {
+        return userDAO.findAllByPageAmount(pageAmount);
+    }
+
+    @Override
+    public int getAllUsersCount() {
+        return userDAO.getAllUsersCount();
     }
 
     private void fillUserWithAuthData(UserAuth userAuth, RoleEnum roleEnum) {

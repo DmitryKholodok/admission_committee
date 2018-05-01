@@ -2,6 +2,8 @@ package by.issoft.kholodok.dao.impl;
 
 import by.issoft.kholodok.dao.UserDAO;
 import by.issoft.kholodok.dao.query.UserQueryProvider;
+import by.issoft.kholodok.model.PageAmount;
+import by.issoft.kholodok.model.role.Role;
 import by.issoft.kholodok.model.user.User;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -13,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigInteger;
 import java.util.Collection;
+import java.util.List;
 
 @Repository
 public class UserDAOImpl implements UserDAO {
@@ -72,6 +76,62 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public void update(User user) {
         sessionFactory.getCurrentSession().update(user);
+    }
+
+    @Transactional
+    @Override
+    public List<User> findByRoleAndPageAmount(Role role, PageAmount pageAmount) {
+        Query query =
+                sessionFactory.getCurrentSession().createNativeQuery(
+                        "select u.user_id, u.name, u.surname , u.email " +
+                                "from user as u " +
+                                "INNER JOIN user_role as ur " +
+                                "on u.user_id = ur.user_id " +
+                                "INNER JOIN role as r " +
+                                "on ur.role_id = r.role_id " +
+                                "where r.name = '" + role.getName() + "' " +
+                                "ORDER BY u.user_id asc " +
+                                "limit " + calculateOffset(pageAmount) + ", " + pageAmount.getAmount()
+                );
+        return (List<User>) query.getResultList();
+    }
+
+    @Transactional
+    @Override
+    public int getUsersCountByRole(Role role) {
+        Query<BigInteger> query =
+                sessionFactory.getCurrentSession().createNativeQuery(
+                        "select count(*) " +
+                                "from user_role " +
+                                "inner join role " +
+                                "on user_role.role_id = role.role_id " +
+                                "where role.name = '" + role.getName() + "'"
+                );
+        return query.getSingleResult().intValue();
+    }
+
+    @Transactional
+    @Override
+    public List<User> findAllByPageAmount(PageAmount pageAmount) {
+        Query query =
+                sessionFactory.getCurrentSession().createNativeQuery(
+                        "select * " +
+                                "from user " +
+                                "ORDER BY user_id asc " +
+                                "limit " + calculateOffset(pageAmount) + ", " + pageAmount.getAmount()
+                );
+        return (List<User>) query.getResultList();
+    }
+
+    @Transactional
+    @Override
+    public int getAllUsersCount() {
+        Query<Long> query = sessionFactory.getCurrentSession().createQuery(userQueryProvider.getAllUsersCount());
+        return query.uniqueResult().intValue();
+    }
+
+    private int calculateOffset(PageAmount pageAmount) {
+        return pageAmount.getPage() * pageAmount.getAmount() - pageAmount.getAmount();
     }
 
 }

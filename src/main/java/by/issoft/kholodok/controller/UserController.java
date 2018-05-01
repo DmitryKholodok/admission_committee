@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/users")
+@RequestMapping(value = "/api/users")
 public class UserController {
 
     private final static Logger LOGGER = LogManager.getLogger(UserController.class);
