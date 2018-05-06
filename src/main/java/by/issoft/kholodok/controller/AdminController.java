@@ -51,12 +51,4 @@ public class AdminController {
         return new ResponseEntity<>(usersCount, HttpStatus.OK);
     }
 
-    private Role retrieveAdminRole() {
-        Role role = new Role();
-        role.setName(RoleEnum.ADMIN.getValue());
-        return role;
-    }
-
-
-
 }

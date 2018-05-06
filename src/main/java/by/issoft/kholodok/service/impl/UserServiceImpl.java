@@ -94,6 +94,18 @@ public class UserServiceImpl implements UserService {
         return userDAO.getAllUsersCount();
     }
 
+    @Override
+    public String[] findEmailsByRole(Role role) {
+        List<String> emails = userDAO.findEmailsByRole(role);
+        String[] emailsArr = new String[emails.size()];
+        return emails.toArray(emailsArr);
+    }
+
+    @Override
+    public List<User> findBirthdayPersons() {
+        return userDAO.findBirthdayPersons();
+    }
+
     private void fillUserWithAuthData(UserAuth userAuth, RoleEnum roleEnum) {
         final Set<Role> userRoleSet = new HashSet<>();
         final Role role = roleDAO.findRoleByName(roleEnum.getValue());

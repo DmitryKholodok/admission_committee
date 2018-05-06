@@ -21,4 +21,6 @@ public interface UserService {
     int getUsersCountByRole(Role role);
     List<User> findAllByPageAmount(PageAmount pageAmount);
     int getAllUsersCount();
+    String[] findEmailsByRole(Role role);
+    List<User> findBirthdayPersons();
 }

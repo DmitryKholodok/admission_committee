@@ -19,4 +19,6 @@ public interface UserDAO {
     int getUsersCountByRole(Role role);
     List<User> findAllByPageAmount(PageAmount pageAmount);
     int getAllUsersCount();
+    List<String> findEmailsByRole(Role role);
+    List<User> findBirthdayPersons();
 }

@@ -49,6 +49,7 @@
         <jwt.v>0.9.0</jwt.v>
         <lombok.v>1.16.18</lombok.v>
         <hibernate.validator.v>5.2.4.Final</hibernate.validator.v>
+        <javax.mail.v>1.4</javax.mail.v>
 
     </properties>
 
@@ -173,6 +174,18 @@
             <version>${hibernate.validator.v}</version>
         </dependency>
 
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>${javax.mail.v}</version>
+        </dependency>
+
+        <!--mail-->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>${spring.v}</version>
+        </dependency>
 
     </dependencies>
 

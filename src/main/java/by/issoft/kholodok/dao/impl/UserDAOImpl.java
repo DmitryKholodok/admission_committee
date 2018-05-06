@@ -130,6 +130,33 @@ public class UserDAOImpl implements UserDAO {
         return query.uniqueResult().intValue();
     }
 
+    @Transactional
+    @Override
+    public List<String> findEmailsByRole(Role role) {
+        Query<String> query =
+                sessionFactory.getCurrentSession().createNativeQuery(
+                        "select u.email " +
+                                "from user as u " +
+                                "INNER JOIN user_role as ur " +
+                                "on u.user_id = ur.user_id " +
+                                "INNER JOIN role as r " +
+                                "on ur.role_id = r.role_id " +
+                                "where r.name = '" + role.getName() + "'"
+                );
+        return query.getResultList();
+    }
+
+    @Transactional
+    @Override
+    public List<User> findBirthdayPersons() {
+        Query<User> query =
+                sessionFactory.getCurrentSession().createQuery(
+                        "from User u " +
+                                "where month(u.dateOfBirth) = month(current_date()) " +
+                                "and day(u.dateOfBirth) = day(current_date())");
+        return query.getResultList();
+    }
+
     private int calculateOffset(PageAmount pageAmount) {
         return pageAmount.getPage() * pageAmount.getAmount() - pageAmount.getAmount();
     }

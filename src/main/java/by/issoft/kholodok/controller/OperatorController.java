@@ -6,6 +6,7 @@ import by.issoft.kholodok.model.role.Role;
 import by.issoft.kholodok.model.role.RoleEnum;
 import by.issoft.kholodok.model.user.User;
 import by.issoft.kholodok.service.UserService;
+import by.issoft.kholodok.util.RoleProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class OperatorController {
             bindingResult.getAllErrors().forEach(x -> LOGGER.error(x.toString()));
             responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
-            List<User> userList = userService.findByRoleAndPageAmount(retrieveEnrolleeRole(), pageAmount);
+            List<User> userList = userService.findByRoleAndPageAmount(RoleProvider.getEnrolleeRole(), pageAmount);
             responseEntity = new ResponseEntity<>(userList, HttpStatus.OK);
         }
         return responseEntity;
@@ -47,14 +48,8 @@ public class OperatorController {
 
     @RequestMapping(value = "/users/count")
     public ResponseEntity<Integer> getUsersCountByRole() {
-        int usersCount= userService.getUsersCountByRole(retrieveEnrolleeRole());
+        int usersCount= userService.getUsersCountByRole(RoleProvider.getEnrolleeRole());
         return new ResponseEntity<>(usersCount, HttpStatus.OK);
-    }
-
-    private Role retrieveEnrolleeRole() {
-        Role role = new Role();
-        role.setName(RoleEnum.ENROLLEE.getValue());
-        return role;
     }
 
 }
