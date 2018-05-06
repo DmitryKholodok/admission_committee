@@ -13,7 +13,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = "by.issoft.kholodok")
-@Import({WebSecurityConfig.class, HibernateConfig.class, QueryConfig.class})
+@Import({WebSecurityConfig.class, HibernateConfig.class, QueryConfig.class, SchedulingConfig.class})
 public class WebAppConfig implements WebMvcConfigurer {
 
     @Bean
