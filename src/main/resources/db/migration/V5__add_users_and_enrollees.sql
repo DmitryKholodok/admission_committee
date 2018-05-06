@@ -1,6 +1,6 @@
-INSERT INTO `adcom`.`user` (`user_id`, `name`, `surname`, `email`) VALUES ('1', 'dima', 'kholodok', 'dm.kholodok@mail.ru');
-INSERT INTO `adcom`.`user` (`user_id`, `name`, `surname`, `email`) VALUES ('2', 'elena', 'kholodok', 'el.kholodok@gmail.com');
-INSERT INTO `adcom`.`user` (`user_id`, `name`, `surname`, `email`) VALUES ('3', 'stas', 'shishov', 'shish@mail.ru');
+INSERT INTO `adcom`.`user` (`user_id`, `name`, `surname`, `email`, `date_of_birth`) VALUES ('1', 'dima', 'kholodok', 'dm.kholodok@mail.ru', '1998-01-01');
+INSERT INTO `adcom`.`user` (`user_id`, `name`, `surname`, `email`, `date_of_birth`) VALUES ('2', 'elena', 'kholodok', 'el.kholodok@gmail.com', '1999-02-01');
+INSERT INTO `adcom`.`user` (`user_id`, `name`, `surname`, `email`, `date_of_birth`) VALUES ('3', 'stas', 'shishov', 'shish@mail.ru', '1999-02-03');
 
 INSERT INTO `adcom`.`user_auth` (`user_id`, `login`, `password`) VALUES ('1', '1', '$2a$10$lozKpbqiJDVPOWbzTjb/BuDqfmYF8rFSUzrM0XXjJhq9BeTzooPMK');
 INSERT INTO `adcom`.`user_role` (`user_id`, `role_id`)
@@ -22,4 +22,4 @@ INSERT INTO `adcom`.`user_role` (`user_id`, `role_id`)
 
 INSERT INTO `adcom`.`enrollee_data` (`user_id`) VALUES ('3');
 
-INSERT INTO `adcom`.`basic_certificate` (`user_id`, `bc_id`, `point`, `date_of_issue`) VALUES ('3', '1231231', '75', '23.10.2017');
+INSERT INTO `adcom`.`basic_certificate` (`user_id`, `bc_id`, `point`, `date_of_issue`) VALUES ('3', '1231231', '75', '2017-06-13');

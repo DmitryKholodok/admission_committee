@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS `adcom`.`user` (
   `user_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `surname` VARCHAR(45) NOT NULL,
+  `date_of_birth` DATE NOT NULL,
   `email` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE INDEX `email_UNIQUE` (`email` ASC))

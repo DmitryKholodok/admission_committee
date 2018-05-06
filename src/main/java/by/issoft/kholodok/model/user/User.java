@@ -18,6 +18,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Entity
 @Table(name = "user")
@@ -38,6 +39,10 @@ public class User {
     @NotNull
     @Column(name = "surname")
     private String surname;
+
+    @NotNull
+    @Column(name = "date_of_birth")
+    private Date dateOfBirth;
 
     @NotNull
     @Column(name = "email")
