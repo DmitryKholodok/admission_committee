@@ -1,9 +1,11 @@
 package by.issoft.kholodok.controller;
 
+import by.issoft.kholodok.controller.command.SendEmailToUsersCommand;
 import by.issoft.kholodok.model.PageAmount;
 import by.issoft.kholodok.model.role.Role;
 import by.issoft.kholodok.model.role.RoleEnum;
 import by.issoft.kholodok.model.user.User;
+import by.issoft.kholodok.service.EmailService;
 import by.issoft.kholodok.service.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,11 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -30,6 +30,9 @@ public class AdminController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private EmailService emailService;
+
     private static final Logger LOGGER = LogManager.getLogger(AdminController.class);
 
     @GetMapping(value = "/users")
@@ -42,6 +45,7 @@ public class AdminController {
             List<User> userList = userService.findAllByPageAmount(pageAmount);
             responseEntity = new ResponseEntity<>(userList, HttpStatus.OK);
         }
+
         return responseEntity;
     }
 
@@ -49,6 +53,25 @@ public class AdminController {
     public ResponseEntity<Integer> getAllUsersCount() {
         int usersCount= userService.getAllUsersCount();
         return new ResponseEntity<>(usersCount, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/notify-all")
+    public ResponseEntity<Void> sendMailToUsers(@Valid @RequestBody SendEmailToUsersCommand command, BindingResult bindingResult) {
+        ResponseEntity<Void> responseEntity;
+        try {
+            if (bindingResult.hasErrors()) {
+                bindingResult.getAllErrors().forEach(x -> LOGGER.error(x.toString()));
+                responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            } else {
+                    emailService.notify(command.getFrom(), command.getTo(), command.getSubject(), command.getSubject());
+                responseEntity = new ResponseEntity<>(HttpStatus.OK);
+            }
+        } catch (MessagingException e) {
+            LOGGER.error(e);
+            responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return responseEntity;
     }
 
 }

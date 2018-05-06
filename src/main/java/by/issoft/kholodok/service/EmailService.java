@@ -1,6 +1,7 @@
 package by.issoft.kholodok.service;
 
 import by.issoft.kholodok.common.EmailSender;
+import by.issoft.kholodok.controller.command.SendEmailToUsersCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +17,8 @@ public class EmailService {
     @Autowired
     private EmailSender emailSender;
 
-    public void notify(String[] to, String subject, String body) throws MessagingException {
-        emailSender.send("FROM", to, subject, body);
+    public void notify(String from, String[] to, String subject, String body) throws MessagingException {
+        emailSender.send(from, to, subject, body);
     }
 
 }

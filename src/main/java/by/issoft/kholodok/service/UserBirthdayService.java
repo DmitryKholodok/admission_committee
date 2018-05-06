@@ -1,6 +1,5 @@
 package by.issoft.kholodok.service;
 
-import by.issoft.kholodok.dao.UserDAO;
 import by.issoft.kholodok.model.user.User;
 import by.issoft.kholodok.util.RoleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +33,7 @@ public class UserBirthdayService {
             System.out.println(body);
             String[] adminEmails = userService.findEmailsByRole(RoleProvider.getAdminRole());
             Arrays.stream(adminEmails).forEach(x -> System.out.println(x));
-            emailService.notify(adminEmails, "BIRTHDAY", body);
+            emailService.notify("Scheduled task", adminEmails, "BIRTHDAY", body);
         } catch (MessagingException e) {
             e.printStackTrace();
         }
