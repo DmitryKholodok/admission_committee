@@ -23,4 +23,5 @@ public interface UserService {
     int getAllUsersCount();
     String[] findEmailsByRole(Role role);
     List<User> findBirthdayPersons();
+    User findByEmail(String email);
 }

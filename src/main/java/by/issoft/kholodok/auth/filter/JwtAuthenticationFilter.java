@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
-    private static final String LOGIN_URL = "/login";
+    private static final String LOGIN_URL = "/api/login";
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;

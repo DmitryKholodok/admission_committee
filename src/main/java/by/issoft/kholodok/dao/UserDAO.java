@@ -21,4 +21,5 @@ public interface UserDAO {
     int getAllUsersCount();
     List<String> findEmailsByRole(Role role);
     List<User> findBirthdayPersons();
+    User findByEmail(String email);
 }

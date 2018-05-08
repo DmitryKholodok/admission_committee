@@ -1,5 +1,6 @@
 package by.issoft.kholodok.controller;
 
+import by.issoft.kholodok.controller.command.FindByEmailCommand;
 import by.issoft.kholodok.exception.RoleServiceException;
 import by.issoft.kholodok.exception.UserServiceException;
 import by.issoft.kholodok.model.role.Role;
@@ -152,6 +153,20 @@ public class UserController {
             LOGGER.error(e);
             responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        return responseEntity;
+    }
+
+    @GetMapping(value = "{email}")
+    public ResponseEntity<User> findUserByEmail(@PathVariable String email) {
+        ResponseEntity<User> responseEntity;
+        User user = userService.findByEmail(email);
+        if (user == null) {
+            responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            responseEntity = new ResponseEntity<>(user, HttpStatus.OK);
+        }
+
+
         return responseEntity;
     }
 

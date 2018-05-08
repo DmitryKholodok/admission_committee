@@ -157,6 +157,15 @@ public class UserDAOImpl implements UserDAO {
         return query.getResultList();
     }
 
+    @Override
+    public User findByEmail(String email) {
+        Query<User> query =
+                sessionFactory.getCurrentSession().createQuery(
+                        "from User u " +
+                                "where u.email = '" + email + "'");
+        return query.getSingleResult();
+    }
+
     private int calculateOffset(PageAmount pageAmount) {
         return pageAmount.getPage() * pageAmount.getAmount() - pageAmount.getAmount();
     }

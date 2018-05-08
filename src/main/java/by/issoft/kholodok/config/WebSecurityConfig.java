@@ -4,7 +4,6 @@ import by.issoft.kholodok.auth.RestAuthenticationEntryPoint;
 import by.issoft.kholodok.auth.service.UserDetailsServiceImpl;
 import by.issoft.kholodok.auth.filter.JwtAuthenticationFilter;
 import by.issoft.kholodok.auth.filter.JwtAuthorizationFilter;
-import by.issoft.kholodok.model.role.Role;
 import by.issoft.kholodok.model.role.RoleEnum;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
