@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class UserDAOImpl implements UserDAO {
@@ -157,13 +158,20 @@ public class UserDAOImpl implements UserDAO {
         return query.getResultList();
     }
 
+    @Transactional
     @Override
     public User findByEmail(String email) {
         Query<User> query =
                 sessionFactory.getCurrentSession().createQuery(
                         "from User u " +
                                 "where u.email = '" + email + "'");
-        return query.getSingleResult();
+        // TODO change
+        try {
+            return query.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+
     }
 
     private int calculateOffset(PageAmount pageAmount) {

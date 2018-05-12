@@ -16,14 +16,12 @@ import javax.persistence.InheritanceType;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
-@Table(name = "user")
 @Getter
 @Setter
+@Table(name = "user")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User {
 
@@ -32,23 +30,18 @@ public class User {
     @Column(name = "user_id")
     private int id;
 
-    @NotNull
     @Column(name = "name")
     private String name;
 
-    @NotNull
     @Column(name = "surname")
     private String surname;
 
-    @NotNull
     @Column(name = "date_of_birth")
     private Date dateOfBirth;
 
-    @NotNull
     @Column(name = "email")
     private String email;
 
-    @Valid
     @OneToOne(fetch = FetchType.LAZY)
     @Cascade(value = { CascadeType.DELETE, CascadeType.PERSIST })
     @PrimaryKeyJoinColumn
@@ -56,4 +49,5 @@ public class User {
 
     public User() {
     }
+
 }

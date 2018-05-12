@@ -1,12 +1,14 @@
 package by.issoft.kholodok.controller;
 
-import by.issoft.kholodok.controller.command.FindByEmailCommand;
+import by.issoft.kholodok.dto.SignUpDto;
+import by.issoft.kholodok.dto.mapper.SignUpDtoMapper;
 import by.issoft.kholodok.exception.RoleServiceException;
 import by.issoft.kholodok.exception.UserServiceException;
 import by.issoft.kholodok.model.role.Role;
 import by.issoft.kholodok.service.RoleService;
 import by.issoft.kholodok.service.UserService;
 import by.issoft.kholodok.model.user.User;
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
+import java.util.Date;
 
 @RestController
 @RequestMapping(value = "/api/users")
@@ -37,8 +41,11 @@ public class UserController {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    private SignUpDtoMapper signUpDtoMapper;
+
     @PostMapping
-    public ResponseEntity<Void> addUser(@Valid @RequestBody User user, BindingResult bindingResult) {
+    public ResponseEntity<Void> addUser(@Valid @RequestBody SignUpDto dto, BindingResult bindingResult) {
         ResponseEntity<Void> responseEntity;
         try {
             if (bindingResult.hasErrors()) {
@@ -46,6 +53,7 @@ public class UserController {
                 responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             } else {
                 LOGGER.info("Adding a new  user");
+                User user = signUpDtoMapper.toUser(dto);
                 userService.save(user);
                 responseEntity = new ResponseEntity<>(HttpStatus.CREATED);
             }

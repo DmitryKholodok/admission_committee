@@ -29,15 +29,12 @@ public class UserAuth {
     @Column(name = "user_id")
     private int id;
 
-    @NotNull
     @Column(name = "login", unique = true)
     private String login;
 
-    @NotNull
     @Column(name = "password")
     private String password;
 
-    @Valid
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_role",
