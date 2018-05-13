@@ -25,7 +25,7 @@
                 <configuration>
                     <driver>com.mysql.cj.jdbc.Driver</driver>
                     <url>jdbc:mysql://localhost:3306/adcom?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;
-                        connectionCollation=utf8_general_ci&amp;characterSetResults=UTF-8</url>
+                        connectionCollation=utf8_general_ci&amp;characterSetResults=UTF-8&amp;serverTimezone=UTC</url>
                     <baseDir>db/migration</baseDir>
                     <user>root</user>
                     <password>root</password>
