@@ -22,7 +22,7 @@ import java.util.Set;
 public class EnrolleeData {
 
     @Id
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id")
     private int id;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -30,12 +30,13 @@ public class EnrolleeData {
     @JsonIgnore
     private User user;
 
-    @Valid
     @OneToOne(mappedBy = "enrolleeData", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private BasicCertificate basicCertificate;
 
-    @Valid
+    @OneToOne(mappedBy = "enrolleeData", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private SpecialtyEnrollee specialtyEnrollee;
+
     @OneToMany(mappedBy = "enrolleeData", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<Certificate> certificateSet;
+    private Set<Certificate> certificates;
 
 }

@@ -22,7 +22,6 @@ public class Subject {
     @Column(name = "subject_id")
     private int id;
 
-    @NotNull
     @Column(name = "name")
     private String name;
 

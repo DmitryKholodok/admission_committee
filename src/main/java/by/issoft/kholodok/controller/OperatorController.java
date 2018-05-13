@@ -1,9 +1,7 @@
 package by.issoft.kholodok.controller;
 
 
-import by.issoft.kholodok.model.PageAmount;
-import by.issoft.kholodok.model.role.Role;
-import by.issoft.kholodok.model.role.RoleEnum;
+import by.issoft.kholodok.controller.command.FindUsersByPageAmountCommand;
 import by.issoft.kholodok.model.user.User;
 import by.issoft.kholodok.service.UserService;
 import by.issoft.kholodok.util.RoleProvider;
@@ -34,13 +32,13 @@ public class OperatorController {
     private static final Logger LOGGER = LogManager.getLogger(OperatorController.class);
 
     @RequestMapping(value = "/users")
-    public ResponseEntity<List<User>> findUsers(@RequestBody @Valid PageAmount pageAmount, BindingResult bindingResult) {
+    public ResponseEntity<List<User>> findUsers(@RequestBody @Valid FindUsersByPageAmountCommand command, BindingResult bindingResult) {
         ResponseEntity<List<User>> responseEntity;
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(x -> LOGGER.error(x.toString()));
             responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
-            List<User> userList = userService.findByRoleAndPageAmount(RoleProvider.getEnrolleeRole(), pageAmount);
+            List<User> userList = userService.findByRoleAndPageAmount(RoleProvider.getEnrolleeRole(), command);
             responseEntity = new ResponseEntity<>(userList, HttpStatus.OK);
         }
         return responseEntity;

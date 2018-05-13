@@ -1,8 +1,6 @@
 package by.issoft.kholodok.dao.query.impl;
 
 import by.issoft.kholodok.dao.query.UserQueryProvider;
-import by.issoft.kholodok.model.PageAmount;
-import by.issoft.kholodok.model.role.Role;
 
 public class HqlUserQueryProvider implements UserQueryProvider {
 

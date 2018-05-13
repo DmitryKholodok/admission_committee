@@ -11,7 +11,7 @@
 
         <Logger name="org.hibernate.SQL" level="debug" />
         <!-- Log all JDBC parameters -->
-        <Logger name="org.hibernate.type" level="debug" />
+        <Logger name="org.hibernate.type" level="trace" />
         <!-- Log all SQL DDL statements as they are executed -->
         <Logger name="org.hibernate.tool.hbm2ddl" level="debug" />
         <!-- Log the state of all entities (max 20 entities) associated with the session at flush time -->
@@ -28,6 +28,7 @@
         <Logger name="org.hibernate.secure" level="debug" />
         <!-- Log everything (a lot of information, but very useful for troubleshooting) -->
         <Logger name="org.hibernate" level="debug" />
+
 
         <Logger name="org.springframework.security.web.FilterChainProxy" level="debug"/>
         <Logger name="org.springframework.security.web.access" level="debug" />

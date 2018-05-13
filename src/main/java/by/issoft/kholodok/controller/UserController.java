@@ -1,14 +1,15 @@
 package by.issoft.kholodok.controller;
 
-import by.issoft.kholodok.dto.SignUpDto;
-import by.issoft.kholodok.dto.mapper.SignUpDtoMapper;
+import by.issoft.kholodok.controller.command.SignUpCommand;
+import by.issoft.kholodok.controller.command.UpdateUserCommand;
+import by.issoft.kholodok.controller.command.mapper.SignUpCommandMapper;
+import by.issoft.kholodok.controller.command.mapper.UpdateUserCommandMapper;
 import by.issoft.kholodok.exception.RoleServiceException;
 import by.issoft.kholodok.exception.UserServiceException;
 import by.issoft.kholodok.model.role.Role;
 import by.issoft.kholodok.service.RoleService;
 import by.issoft.kholodok.service.UserService;
 import by.issoft.kholodok.model.user.User;
-import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
-import java.util.Date;
 
 @RestController
 @RequestMapping(value = "/api/users")
@@ -42,10 +41,14 @@ public class UserController {
     private RoleService roleService;
 
     @Autowired
-    private SignUpDtoMapper signUpDtoMapper;
+    private SignUpCommandMapper signUpCommandMapper;
 
+    @Autowired
+    private UpdateUserCommandMapper updateUserCommandMapper;
+
+    //GOOD
     @PostMapping
-    public ResponseEntity<Void> addUser(@Valid @RequestBody SignUpDto dto, BindingResult bindingResult) {
+    public ResponseEntity<Void> addUser(@Valid @RequestBody SignUpCommand command, BindingResult bindingResult) {
         ResponseEntity<Void> responseEntity;
         try {
             if (bindingResult.hasErrors()) {
@@ -53,7 +56,7 @@ public class UserController {
                 responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             } else {
                 LOGGER.info("Adding a new  user");
-                User user = signUpDtoMapper.toUser(dto);
+                User user = signUpCommandMapper.toUser(command);
                 userService.save(user);
                 responseEntity = new ResponseEntity<>(HttpStatus.CREATED);
             }
@@ -65,6 +68,7 @@ public class UserController {
         return responseEntity;
     }
 
+    //GOOD
     @GetMapping(value = "{id}")
     public ResponseEntity<User> findUser(@PathVariable int id) {
 
@@ -100,6 +104,7 @@ public class UserController {
         return responseEntity;
     }
 
+    //GOOD
     @DeleteMapping(value = "{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable int id) {
         ResponseEntity<Void> responseEntity;
@@ -123,8 +128,9 @@ public class UserController {
         return responseEntity;
     }
 
+    //GOOD
     @PutMapping(value = "{id}")
-    public ResponseEntity<Void> updateUser(@PathVariable int id, @RequestBody @Valid User user, BindingResult bindingResult) {
+    public ResponseEntity<Void> updateUser(@PathVariable int id, @RequestBody @Valid UpdateUserCommand command, BindingResult bindingResult) {
         ResponseEntity<Void> responseEntity;
         try {
             if (bindingResult.hasErrors()) {
@@ -135,6 +141,7 @@ public class UserController {
                 if (updatedUser == null) {
                     responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
                 } else {
+                    User user = updateUserCommandMapper.toUser(command);
                     org.springframework.security.core.userdetails.User principal =
                             (org.springframework.security.core.userdetails.User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -164,17 +171,37 @@ public class UserController {
         return responseEntity;
     }
 
-    @GetMapping(value = "{email}")
-    public ResponseEntity<User> findUserByEmail(@PathVariable String email) {
+    //GOOD
+    @GetMapping(value = "/get-by-login/{login}")
+    public ResponseEntity<User> findUserByEmail(@PathVariable String login) {
         ResponseEntity<User> responseEntity;
-        User user = userService.findByEmail(email);
-        if (user == null) {
-            responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else {
-            responseEntity = new ResponseEntity<>(user, HttpStatus.OK);
+        try {
+            User requestedUser = userService.findByLogin(login);
+            if (requestedUser == null) {
+                responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            } else {
+                org.springframework.security.core.userdetails.User principal =
+                        (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+                // Whether the user gets himself
+                User currUser = userService.findByLogin(principal.getUsername());
+                if (!currUser.getUserAuth().getLogin().equals(login)) {
+
+                    Role userRole = roleService.retrieveUserRole(SecurityContextHolder.getContext().getAuthentication());
+                    Role requiredRole = roleService.retrieveUserRole(requestedUser);
+                    if (roleService.compare(userRole, requiredRole) < 1) {
+                        LOGGER.debug("User with role " + userRole.getName() + " tried to get the user with role " +
+                                requiredRole.getName() + ". Result - FORBIDDEN");
+                        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+                    }
+                }
+                LOGGER.debug("Getting the user by login: {}", login);
+                responseEntity = new ResponseEntity<>(requestedUser, HttpStatus.OK);
+            }
+        } catch (RoleServiceException e) {
+            LOGGER.fatal(e);
+            throw new RuntimeException(e);
         }
-
-
         return responseEntity;
     }
 

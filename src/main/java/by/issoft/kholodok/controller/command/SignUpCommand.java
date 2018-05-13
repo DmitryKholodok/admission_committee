@@ -1,4 +1,4 @@
-package by.issoft.kholodok.dto;
+package by.issoft.kholodok.controller.command;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.Email;
@@ -12,7 +12,7 @@ import java.util.Date;
  */
 
 @Data
-public class SignUpDto {
+public class SignUpCommand {
 
     @NotBlank
     private String name;

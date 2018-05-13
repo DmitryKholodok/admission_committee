@@ -1,5 +1,8 @@
 package by.issoft.kholodok.controller;
 
+import by.issoft.kholodok.controller.command.CreateEnrolleeDataCommand;
+import by.issoft.kholodok.controller.command.UpdateEnrolleeDataCommand;
+import by.issoft.kholodok.controller.command.mapper.UpdateEnrolleeDataMapper;
 import by.issoft.kholodok.exception.BadUserRoleException;
 import by.issoft.kholodok.exception.EnrolleeDataServiceException;
 import by.issoft.kholodok.exception.RoleServiceException;
@@ -37,8 +40,15 @@ public class EnrolleeDataController {
     @Autowired
     private EnrolleeDataService enrolleeDataService;
 
+    @Autowired
+    private UpdateEnrolleeDataMapper updateEnrolleeDataMapper;
+
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Void> updateEnrolleeData(@PathVariable int id, @RequestBody @Valid EnrolleeData enrolleeData, BindingResult bindingResult) {
+    public ResponseEntity<Void> updateEnrolleeData(
+            @PathVariable int id,
+            @RequestBody @Valid UpdateEnrolleeDataCommand command,
+            BindingResult bindingResult) {
+
         ResponseEntity<Void> responseEntity;
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(x -> LOGGER.error(x.toString()));
@@ -48,7 +58,11 @@ public class EnrolleeDataController {
             if (updatedEnrolleeData == null) {
                 responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
             } else {
+                EnrolleeData enrolleeData = updateEnrolleeDataMapper.toEnrolleeData(command);
                 enrolleeData.setId(id);
+                enrolleeData.getBasicCertificate().setEnrolleeData(enrolleeData);
+                enrolleeData.getSpecialtyEnrollee().setId(id);
+                enrolleeData.getCertificates().forEach(x -> x.setEnrolleeData(enrolleeData));
                 enrolleeDataService.update(enrolleeData);
                 responseEntity = new ResponseEntity<>(HttpStatus.OK);
             }
@@ -87,18 +101,26 @@ public class EnrolleeDataController {
         } catch (RoleServiceException e) {
             LOGGER.error(e);
             responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            LOGGER.error(e);
+            responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return responseEntity;
     }
 
     @PostMapping
-    public ResponseEntity<Void> addEnrolleeData(@RequestBody @Valid EnrolleeData enrolleeData, BindingResult bindingResult) {
+    public ResponseEntity<Void> addEnrolleeData(
+            @RequestBody @Valid CreateEnrolleeDataCommand command,
+            BindingResult bindingResult) {
+
         ResponseEntity<Void> responseEntity;
         try {
             if (bindingResult.hasErrors()) {
                 bindingResult.getAllErrors().forEach(x -> LOGGER.error(x.toString()));
                 responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             } else {
+                EnrolleeData enrolleeData = new EnrolleeData();
+                enrolleeData.setId(command.getUserId());
                 enrolleeDataService.save(enrolleeData);
                 responseEntity = new ResponseEntity<>(HttpStatus.CREATED);
             }

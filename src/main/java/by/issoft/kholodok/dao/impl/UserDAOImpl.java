@@ -1,8 +1,8 @@
 package by.issoft.kholodok.dao.impl;
 
+import by.issoft.kholodok.controller.command.FindUsersByPageAmountCommand;
 import by.issoft.kholodok.dao.UserDAO;
 import by.issoft.kholodok.dao.query.UserQueryProvider;
-import by.issoft.kholodok.model.PageAmount;
 import by.issoft.kholodok.model.role.Role;
 import by.issoft.kholodok.model.user.User;
 import org.apache.logging.log4j.Level;
@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class UserDAOImpl implements UserDAO {
@@ -81,7 +80,7 @@ public class UserDAOImpl implements UserDAO {
 
     @Transactional
     @Override
-    public List<User> findByRoleAndPageAmount(Role role, PageAmount pageAmount) {
+    public List<User> findByRoleAndPageAmount(Role role, FindUsersByPageAmountCommand pageAmount) {
         Query query =
                 sessionFactory.getCurrentSession().createNativeQuery(
                         "select u.user_id, u.name, u.surname , u.email " +
@@ -113,13 +112,13 @@ public class UserDAOImpl implements UserDAO {
 
     @Transactional
     @Override
-    public List<User> findAllByPageAmount(PageAmount pageAmount) {
+    public List<User> findAllByPageAmount(FindUsersByPageAmountCommand command) {
         Query query =
                 sessionFactory.getCurrentSession().createNativeQuery(
                         "select * " +
                                 "from user " +
                                 "ORDER BY user_id asc " +
-                                "limit " + calculateOffset(pageAmount) + ", " + pageAmount.getAmount()
+                                "limit " + calculateOffset(command) + ", " + command.getAmount()
                 );
         return (List<User>) query.getResultList();
     }
@@ -174,7 +173,7 @@ public class UserDAOImpl implements UserDAO {
 
     }
 
-    private int calculateOffset(PageAmount pageAmount) {
+    private int calculateOffset(FindUsersByPageAmountCommand pageAmount) {
         return pageAmount.getPage() * pageAmount.getAmount() - pageAmount.getAmount();
     }
 

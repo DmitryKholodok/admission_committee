@@ -27,17 +27,13 @@ public class BasicCertificate {
     @Column(name = "bc_id")
     private int id;
 
-    @NotNull
-    @Range(min = 0, max = 100)
     @Column(name = "point")
     private int point;
 
-    @NotNull
     @Column(name = "date_of_issue")
     @Temporal(value = TemporalType.DATE)
     private Date dateOfIssue;
 
-    @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonIgnore

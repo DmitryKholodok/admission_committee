@@ -25,14 +25,12 @@ import java.util.Date;
 public class Certificate {
 
     @Id
-    @Column(name = "certificate_id", nullable = false)
+    @Column(name = "certificate_id")
     private int id;
 
-    @Range(min = 0, max = 100)
     @Column(name = "point")
     private int point;
 
-    @NotNull
     @Column(name = "date_of_issue")
     @Temporal(value = TemporalType.DATE)
     private Date dateOfIssue;

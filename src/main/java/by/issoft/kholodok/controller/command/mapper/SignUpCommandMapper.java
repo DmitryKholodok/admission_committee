@@ -1,6 +1,6 @@
-package by.issoft.kholodok.dto.mapper;
+package by.issoft.kholodok.controller.command.mapper;
 
-import by.issoft.kholodok.dto.SignUpDto;
+import by.issoft.kholodok.controller.command.SignUpCommand;
 import by.issoft.kholodok.model.user.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -11,13 +11,13 @@ import org.mapstruct.Mappings;
  */
 
 @Mapper(componentModel = "spring")
-public interface SignUpDtoMapper {
+public interface SignUpCommandMapper {
 
     @Mappings({
             @Mapping(target = "userAuth.login", source = "login"),
             @Mapping(target = "userAuth.password", source = "password")
 
     })
-    User toUser(SignUpDto dto);
+    User toUser(SignUpCommand dto);
 
 }

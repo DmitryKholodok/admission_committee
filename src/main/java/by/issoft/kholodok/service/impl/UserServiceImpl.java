@@ -4,11 +4,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import by.issoft.kholodok.controller.command.FindUsersByPageAmountCommand;
 import by.issoft.kholodok.dao.RoleDAO;
 import by.issoft.kholodok.dao.UserAuthDAO;
 import by.issoft.kholodok.dao.UserDAO;
 import by.issoft.kholodok.exception.UserServiceException;
-import by.issoft.kholodok.model.PageAmount;
 import by.issoft.kholodok.model.role.Role;
 import by.issoft.kholodok.model.role.RoleEnum;
 import by.issoft.kholodok.model.user.User;
@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findByRoleAndPageAmount(Role role, PageAmount pageAmount) {
+    public List<User> findByRoleAndPageAmount(Role role, FindUsersByPageAmountCommand pageAmount) {
         return userDAO.findByRoleAndPageAmount(role, pageAmount);
     }
 
@@ -85,8 +85,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findAllByPageAmount(PageAmount pageAmount) {
-        return userDAO.findAllByPageAmount(pageAmount);
+    public List<User> findAllByPageAmount(FindUsersByPageAmountCommand command) {
+        return userDAO.findAllByPageAmount(command);
     }
 
     @Override
