@@ -26,7 +26,7 @@ public class CommonController {
         return univerService.retrieveFaculties();
     }
 
-    @GetMapping(value = "/faculties")
+    @GetMapping(value = "/specialties")
     public List<Subject> retrieveSubjects() {
         return univerService.retrieveSubjects();
     }
