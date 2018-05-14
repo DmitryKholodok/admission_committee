@@ -16,6 +16,7 @@ import by.issoft.kholodok.model.user.UserAuth;
 import by.issoft.kholodok.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -109,6 +110,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByEmail(String email) {
         return userDAO.findByEmail(email);
+    }
+
+    @Override
+    public User retrieveCurrentUser(Authentication authentication) {
+        org.springframework.security.core.userdetails.User principal =
+                (org.springframework.security.core.userdetails.User)authentication.getPrincipal();
+        return findByLogin(principal.getUsername());
     }
 
     private void fillUserWithAuthData(UserAuth userAuth, RoleEnum roleEnum) {

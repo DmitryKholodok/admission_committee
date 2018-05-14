@@ -172,37 +172,10 @@ public class UserController {
     }
 
     //GOOD
-    @GetMapping(value = "/get-by-login/{login}")
-    public ResponseEntity<User> findUserByEmail(@PathVariable String login) {
-        ResponseEntity<User> responseEntity;
-        try {
-            User requestedUser = userService.findByLogin(login);
-            if (requestedUser == null) {
-                responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            } else {
-                org.springframework.security.core.userdetails.User principal =
-                        (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-                // Whether the user gets himself
-                User currUser = userService.findByLogin(principal.getUsername());
-                if (!currUser.getUserAuth().getLogin().equals(login)) {
-
-                    Role userRole = roleService.retrieveUserRole(SecurityContextHolder.getContext().getAuthentication());
-                    Role requiredRole = roleService.retrieveUserRole(requestedUser);
-                    if (roleService.compare(userRole, requiredRole) < 1) {
-                        LOGGER.debug("User with role " + userRole.getName() + " tried to get the user with role " +
-                                requiredRole.getName() + ". Result - FORBIDDEN");
-                        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-                    }
-                }
-                LOGGER.debug("Getting the user by login: {}", login);
-                responseEntity = new ResponseEntity<>(requestedUser, HttpStatus.OK);
-            }
-        } catch (RoleServiceException e) {
-            LOGGER.fatal(e);
-            throw new RuntimeException(e);
-        }
-        return responseEntity;
+    @GetMapping(value = "/current") // sends with Auth token
+    public ResponseEntity<User> retrieveCurrentUser() {
+        User user = userService.retrieveCurrentUser(SecurityContextHolder.getContext().getAuthentication());
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
 }

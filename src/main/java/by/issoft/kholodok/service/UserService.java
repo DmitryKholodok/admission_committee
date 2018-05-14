@@ -4,6 +4,7 @@ import by.issoft.kholodok.controller.command.FindUsersByPageAmountCommand;
 import by.issoft.kholodok.exception.UserServiceException;
 import by.issoft.kholodok.model.role.Role;
 import by.issoft.kholodok.model.user.User;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -22,4 +23,5 @@ public interface UserService {
     String[] findEmailsByRole(Role role);
     List<User> findBirthdayPersons();
     User findByEmail(String email);
+    User retrieveCurrentUser(Authentication authentication);
 }
