@@ -1,5 +1,6 @@
 package by.issoft.kholodok.controller.command;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.hibernate.validator.constraints.Range;
 
@@ -8,6 +9,7 @@ import org.hibernate.validator.constraints.Range;
  */
 
 @Data
+@AllArgsConstructor
 public class FindUsersByPageAmountCommand {
 
     @Range(min = 1)

@@ -33,14 +33,16 @@ public class AdminController {
 
     private static final Logger LOGGER = LogManager.getLogger(AdminController.class);
 
-    // TODO url params
+    // GOOD
     @GetMapping(value = "/users")
-    public ResponseEntity<List<User>> findAllUsers(@RequestBody @Valid FindUsersByPageAmountCommand command, BindingResult bindingResult) {
+    public ResponseEntity<List<User>> findAllUsers(
+            @RequestParam int page,
+            @RequestParam int amount) {
         ResponseEntity<List<User>> responseEntity;
-        if (bindingResult.hasErrors()) {
-            bindingResult.getAllErrors().forEach(x -> LOGGER.error(x.toString()));
+        if (page <= 0 || amount <= 0) {
             responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
+            FindUsersByPageAmountCommand command = new FindUsersByPageAmountCommand(page, amount);
             List<User> userList = userService.findAllByPageAmount(command);
             responseEntity = new ResponseEntity<>(userList, HttpStatus.OK);
         }
@@ -48,6 +50,7 @@ public class AdminController {
         return responseEntity;
     }
 
+    // GOOD
     @GetMapping(value = "/users/count")
     public ResponseEntity<Integer> getAllUsersCount() {
         int usersCount= userService.getAllUsersCount();
