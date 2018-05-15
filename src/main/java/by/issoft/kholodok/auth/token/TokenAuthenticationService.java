@@ -24,6 +24,7 @@ public class TokenAuthenticationService {
     public void addAuthentication(HttpServletResponse res, Authentication authentication) {
         res.addHeader(tokenProperty.getHttpHeaderName(),
                 tokenProperty.getPrefix() + " " + tokenUtil.createTokenForUser(authentication));
+        res.addHeader("Access-Control-Expose-Headers", "Authorization");
     }
 
     public Authentication getAuthentication(HttpServletRequest request) {
