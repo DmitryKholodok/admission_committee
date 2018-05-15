@@ -113,14 +113,11 @@ public class UserDAOImpl implements UserDAO {
     @Transactional
     @Override
     public List<User> findAllByPageAmount(FindUsersByPageAmountCommand command) {
-        Query query =
-                sessionFactory.getCurrentSession().createNativeQuery(
-                        "select * " +
-                                "from user " +
-                                "ORDER BY user_id asc " +
-                                "limit " + calculateOffset(command) + ", " + command.getAmount()
-                );
-        return (List<User>) query.getResultList();
+        Query<User> query = sessionFactory.getCurrentSession()
+                .createQuery("from User")
+                .setFirstResult(calculateOffset(command))
+                .setMaxResults(command.getAmount());
+        return query.getResultList();
     }
 
     @Transactional
