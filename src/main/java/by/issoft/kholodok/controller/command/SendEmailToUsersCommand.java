@@ -27,4 +27,6 @@ public class SendEmailToUsersCommand {
     @NotNull
     private String body;
 
+    private String template;
+
 }
