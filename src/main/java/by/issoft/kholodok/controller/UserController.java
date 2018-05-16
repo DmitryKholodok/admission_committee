@@ -17,14 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -151,7 +144,7 @@ public class UserController {
 
                         // if the user updates not himself, we should validate his rights
                         Role userRole = roleService.retrieveUserRole(SecurityContextHolder.getContext().getAuthentication());
-                        Role requiredRole = roleService.retrieveUserRole(user);
+                        Role requiredRole = roleService.retrieveUserRole(userService.findById(command.getId()));
                         if (roleService.compare(userRole, requiredRole) < 1) {
                             LOGGER.debug("User with role " + userRole.getName() + " tried to update the user with role " +
                                     requiredRole.getName() + ". Result - FORBIDDEN");

@@ -14,6 +14,9 @@ import java.util.Date;
 @Data
 public class UpdateUserCommand {
 
+    @NotNull
+    private Integer id;
+
     @NotBlank
     private String name;
 

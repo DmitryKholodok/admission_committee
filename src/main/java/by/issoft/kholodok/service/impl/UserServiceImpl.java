@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Set;
 
 import by.issoft.kholodok.controller.command.FindUsersByPageAmountCommand;
+import by.issoft.kholodok.dao.EnrolleeDataDao;
 import by.issoft.kholodok.dao.RoleDAO;
 import by.issoft.kholodok.dao.UserAuthDAO;
 import by.issoft.kholodok.dao.UserDAO;
 import by.issoft.kholodok.exception.UserServiceException;
+import by.issoft.kholodok.model.EnrolleeData;
 import by.issoft.kholodok.model.role.Role;
 import by.issoft.kholodok.model.role.RoleEnum;
 import by.issoft.kholodok.model.user.User;
@@ -36,6 +38,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserAuthDAO userAuthDAO;
 
+    @Autowired
+    private EnrolleeDataDao enrolleeDataDao;
+
     @Override
     @Transactional
     public void save(User user) throws UserServiceException {
@@ -61,7 +66,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public boolean deleteById(int id) {
+        EnrolleeData enrolleeData = enrolleeDataDao.findById(id);
+        if (enrolleeData != null) {
+            enrolleeDataDao.remove(enrolleeData);
+        }
         return userDAO.deleteById(id);
     }
 
