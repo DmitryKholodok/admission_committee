@@ -73,7 +73,7 @@ public class UserAuthController {
 
     @RequestMapping(value = "/login/exists", method = RequestMethod.HEAD)
     public ResponseEntity<Void> isUserLoginExists(@RequestParam String login) {
-        return (userService.findByLogin(login) == null) ?
+        return (userService.findByLogin(login) != null) ?
                 new ResponseEntity<>(HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

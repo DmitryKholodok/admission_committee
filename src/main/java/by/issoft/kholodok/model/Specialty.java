@@ -34,8 +34,11 @@ public class Specialty {
     @JsonIgnore
     private Faculty faculty;
 
-    @Column(name = "place_count")
-    private int placeCount;
+    @Column(name = "chargeable_pc")
+    private int chargeablePlaceCount;
+
+    @Column(name = "budgetary_pc")
+    private int budgetaryPlaceCount;
 
     public Specialty() {}
 

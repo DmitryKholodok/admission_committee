@@ -35,4 +35,7 @@ public class SpecialtyEnrollee {
     @JoinColumn(name = "specialty_id")
     private Specialty specialty;
 
+    @Column(name = "chargeable")
+    private Boolean chargeable;
+
 }

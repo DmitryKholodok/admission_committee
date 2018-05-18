@@ -42,6 +42,12 @@ public class User {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "age")
+    private Integer age;
+
+    @Column(name = "tel")
+    private String tel;
+
     @OneToOne(fetch = FetchType.LAZY)
     @Cascade(value = { CascadeType.DELETE, CascadeType.PERSIST })
     @PrimaryKeyJoinColumn

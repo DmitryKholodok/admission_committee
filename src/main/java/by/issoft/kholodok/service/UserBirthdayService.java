@@ -33,14 +33,14 @@ public class UserBirthdayService {
             System.out.println(body);
             String[] adminEmails = userService.findEmailsByRole(RoleProvider.getAdminRole());
             Arrays.stream(adminEmails).forEach(x -> System.out.println(x));
-            emailService.notify("Scheduled task", adminEmails, "BIRTHDAY", body);
+            emailService.notify("Scheduled_task", adminEmails, "BIRTHDAY", body);
         } catch (MessagingException e) {
             e.printStackTrace();
         }
     }
 
     private String formBody(List<User> users) {
-        if (users == null) {
+        if (users == null || users.isEmpty()) {
             return "No users have birth today!";
         } else {
             StringBuilder sb = new StringBuilder();
