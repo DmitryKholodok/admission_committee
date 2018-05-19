@@ -1,5 +1,7 @@
 package by.issoft.kholodok.controller;
 
+import by.issoft.kholodok.controller.command.UpdateUserAuthCommand;
+import by.issoft.kholodok.controller.command.mapper.UpdateUserAuthMapper;
 import by.issoft.kholodok.exception.RoleServiceException;
 import by.issoft.kholodok.model.role.Role;
 import by.issoft.kholodok.service.RoleService;
@@ -33,8 +35,14 @@ public class UserAuthController {
     @Autowired
     private UserAuthService userAuthService;
 
+    @Autowired
+    private UpdateUserAuthMapper userAuthMapper;
+
     @PutMapping(value = "{id}")
-    public ResponseEntity<Void> updateUserAuth(@PathVariable int id, @RequestBody @Valid UserAuth userAuth, BindingResult bindingResult) {
+    public ResponseEntity<Void> updateUserAuth(
+            @PathVariable int id,
+            @RequestBody @Valid UpdateUserAuthCommand command,
+            BindingResult bindingResult) {
         ResponseEntity<Void> responseEntity;
         try {
             if (bindingResult.hasErrors()) {
@@ -57,7 +65,7 @@ public class UserAuthController {
                             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
                         }
                     }
-                    userAuth.setId(id);
+                    UserAuth userAuth = userAuthMapper.toUserAuth(command);
                     userAuthService.updateUserAuth(userAuth);
                     responseEntity = new ResponseEntity<>(HttpStatus.OK);
                 } else {
