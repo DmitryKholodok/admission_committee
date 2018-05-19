@@ -27,6 +27,12 @@ public class SignUpCommand {
     private String email;
 
     @NotBlank
+    private String tel;
+
+    @NotBlank
+    private String gender;
+
+    @NotBlank
     private String login;
 
     @NotBlank

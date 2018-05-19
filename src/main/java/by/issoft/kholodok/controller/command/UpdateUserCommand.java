@@ -29,4 +29,10 @@ public class UpdateUserCommand {
     @Email
     private String email;
 
+    @NotBlank
+    private String tel;
+
+    @NotBlank
+    private String gender;
+
 }

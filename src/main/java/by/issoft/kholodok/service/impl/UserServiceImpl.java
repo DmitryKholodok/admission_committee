@@ -1,5 +1,6 @@
 package by.issoft.kholodok.service.impl;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -127,6 +128,12 @@ public class UserServiceImpl implements UserService {
         org.springframework.security.core.userdetails.User principal =
                 (org.springframework.security.core.userdetails.User)authentication.getPrincipal();
         return findByLogin(principal.getUsername());
+    }
+
+    @Override
+    @Transactional
+    public void deleteByIds(int[] ids) {
+        Arrays.stream(ids).forEach(x -> deleteById(x));
     }
 
     private void fillUserWithAuthData(UserAuth userAuth, RoleEnum roleEnum) {

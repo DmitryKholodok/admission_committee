@@ -1,5 +1,6 @@
 package by.issoft.kholodok.controller;
 
+import by.issoft.kholodok.controller.command.DeleteUsersByIdsCommand;
 import by.issoft.kholodok.controller.command.SignUpCommand;
 import by.issoft.kholodok.controller.command.UpdateUserCommand;
 import by.issoft.kholodok.controller.command.mapper.SignUpCommandMapper;
@@ -48,7 +49,7 @@ public class UserController {
                 bindingResult.getAllErrors().forEach(x -> LOGGER.error(x.toString()));
                 responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             } else {
-                LOGGER.info("Adding a new  user");
+                LOGGER.info("Adding a new user");
                 User user = signUpCommandMapper.toUser(command);
                 userService.save(user);
                 responseEntity = new ResponseEntity<>(HttpStatus.CREATED);
@@ -169,6 +170,25 @@ public class UserController {
     public ResponseEntity<User> retrieveCurrentUser() {
         User user = userService.retrieveCurrentUser(SecurityContextHolder.getContext().getAuthentication());
         return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    public ResponseEntity<Void> deleteUsersByIds(@RequestBody @Valid DeleteUsersByIdsCommand command) {
+        ResponseEntity<Void> responseEntity;
+        try {
+            Role userRole = roleService.retrieveUserRole(SecurityContextHolder.getContext().getAuthentication());
+            if (roleService.isRoleAdmin(userRole)) {
+                userService.deleteByIds(command.getIds());
+                responseEntity = new ResponseEntity<Void>(HttpStatus.OK);
+            } else {
+                LOGGER.debug("User with role " + userRole.getName() +
+                        " tried to delete the user, but only admins can do it. Result - FORBIDDEN");
+                responseEntity = new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
+        } catch (Exception e) {
+            LOGGER.error(e);
+            responseEntity = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return responseEntity;
     }
 
 }

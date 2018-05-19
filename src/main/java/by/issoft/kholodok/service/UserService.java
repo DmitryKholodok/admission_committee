@@ -24,4 +24,5 @@ public interface UserService {
     List<User> findBirthdayPersons();
     User findByEmail(String email);
     User retrieveCurrentUser(Authentication authentication);
+    void deleteByIds(int[] ids);
 }
