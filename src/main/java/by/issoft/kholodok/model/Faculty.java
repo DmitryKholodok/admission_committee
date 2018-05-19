@@ -21,7 +21,10 @@ public class Faculty {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "faculty", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(
+            mappedBy = "faculty",
+            cascade = CascadeType.REMOVE,
+            fetch = FetchType.EAGER)
     private Set<Specialty> specialtySet;
 
     public Faculty() {}

@@ -22,11 +22,6 @@ public class CommonController {
     @Autowired
     private UniverService univerService;
 
-    @GetMapping(value = "/faculties")
-    public List<Faculty> retrieveFaculties() {
-        return univerService.retrieveFaculties();
-    }
-
     @GetMapping(value = "/subjects")
     public List<Subject> retrieveSubjects() {
         return univerService.retrieveSubjects();
