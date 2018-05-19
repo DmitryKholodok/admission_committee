@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS `adcom`.`specialty` (
   `specialty_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `faculty_id` INT UNSIGNED NOT NULL,
   `name` VARCHAR(45) NOT NULL,
-  `place_count` INT UNSIGNED NOT NULL,
+  `budgetary_pc` INT UNSIGNED NOT NULL,
+  `chargeable_pc` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`specialty_id`),
   UNIQUE INDEX `name_UNIQUE` (`name` ASC),
   INDEX `fk_Specialty_Faculty1_idx` (`faculty_id` ASC),
@@ -49,19 +50,20 @@ CREATE TABLE IF NOT EXISTS `adcom`.`specialty_enrollee_data` (
 ENGINE = InnoDB;
 
 
-INSERT INTO `adcom`.`faculty` (`name`) VALUES ('f1');
+INSERT INTO `adcom`.`faculty` (`name`) VALUES ('f1_РУССКИЙ_ТЕСТ');
 INSERT INTO `adcom`.`faculty` (`name`) VALUES ('f2');
 INSERT INTO `adcom`.`faculty` (`name`) VALUES ('f3');
 
 
-INSERT INTO `adcom`.`specialty` (`faculty_id`, `name`, `place_count`) VALUES ('1', 'f1_sp1', '10');
-INSERT INTO `adcom`.`specialty` (`faculty_id`, `name`, `place_count`) VALUES ('1', 'f1_sp2', '20');
-INSERT INTO `adcom`.`specialty` (`faculty_id`, `name`, `place_count`) VALUES ('1', 'f1_sp3', '30');
-INSERT INTO `adcom`.`specialty` (`faculty_id`, `name`, `place_count`) VALUES ('2', 'f2_sp1', '10');
-INSERT INTO `adcom`.`specialty` (`faculty_id`, `name`, `place_count`) VALUES ('2', 'f2_sp2', '15');
-INSERT INTO `adcom`.`specialty` (`faculty_id`, `name`, `place_count`) VALUES ('2', 'f2_sp3', '5');
-INSERT INTO `adcom`.`specialty` (`faculty_id`, `name`, `place_count`) VALUES ('3', 'f3_sp1', '30');
-INSERT INTO `adcom`.`specialty` (`faculty_id`, `name`, `place_count`) VALUES ('3', 'f3_sp2', '50');
-INSERT INTO `adcom`.`specialty` (`faculty_id`, `name`, `place_count`) VALUES ('3', 'f3_sp3', '70');
+INSERT INTO `adcom`.`specialty` (`faculty_id`, `name`, `chargeable_pc`, `budgetary_pc`) VALUES ('1', 'f1_sp1_РУССКИЙ_ТЕСТ', '10', '10');
+INSERT INTO `adcom`.`specialty` (`faculty_id`, `name`, `chargeable_pc`, `budgetary_pc`) VALUES ('1', 'f1_sp2', '20', '25');
+INSERT INTO `adcom`.`specialty` (`faculty_id`, `name`, `chargeable_pc`, `budgetary_pc`) VALUES ('1', 'f1_sp3', '30', '25');
+INSERT INTO `adcom`.`specialty` (`faculty_id`, `name`, `chargeable_pc`, `budgetary_pc`) VALUES ('2', 'f2_sp1_РУССКИЙ_ТЕСТ', '23', '7');
+INSERT INTO `adcom`.`specialty` (`faculty_id`, `name`, `chargeable_pc`, `budgetary_pc`) VALUES ('2', 'f2_sp2', '7', '1');
+INSERT INTO `adcom`.`specialty` (`faculty_id`, `name`, `chargeable_pc`, `budgetary_pc`) VALUES ('2', 'f2_sp3', '50', '65');
+INSERT INTO `adcom`.`specialty` (`faculty_id`, `name`, `chargeable_pc`, `budgetary_pc`) VALUES ('3', 'f3_sp1_РУССКИЙ_ТЕСТ', '10', '10');
+INSERT INTO `adcom`.`specialty` (`faculty_id`, `name`, `chargeable_pc`, `budgetary_pc`) VALUES ('3', 'f3_sp2', '13', '34');
+INSERT INTO `adcom`.`specialty` (`faculty_id`, `name`, `chargeable_pc`, `budgetary_pc`) VALUES ('3', 'f3_sp3', '23', '43');
+
 
 

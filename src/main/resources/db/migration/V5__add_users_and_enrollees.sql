@@ -1,4 +1,4 @@
-INSERT INTO `adcom`.`user` (`user_id`, `name`, `surname`, `email`, `date_of_birth`) VALUES ('1', 'dima', 'kholodok', 'dm.kholodok@gmail.com', '1998-01-01');
+INSERT INTO `adcom`.`user` (`user_id`, `name`, `surname`, `email`, `date_of_birth`) VALUES ('1', 'Дима', 'kholodok', 'dm.kholodok@gmail.com', '1998-01-01');
 INSERT INTO `adcom`.`user` (`user_id`, `name`, `surname`, `email`, `date_of_birth`) VALUES ('2', 'elena', 'kholodok', 'el.kholodok@gmail.com', '1999-02-01');
 INSERT INTO `adcom`.`user` (`user_id`, `name`, `surname`, `email`, `date_of_birth`) VALUES ('3', 'stas', 'shishov', 'shish@mail.ru', '1999-02-03');
 

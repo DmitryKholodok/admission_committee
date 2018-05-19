@@ -36,7 +36,7 @@ DEFAULT CHARACTER SET = utf8;
 
 INSERT INTO `adcom`.`subject` (`subject_id`, `name`) VALUES ('1', 'Maths');
 INSERT INTO `adcom`.`subject` (`subject_id`, `name`) VALUES ('2', 'Physics');
-INSERT INTO `adcom`.`subject` (`subject_id`, `name`) VALUES ('3', 'Russian');
+INSERT INTO `adcom`.`subject` (`subject_id`, `name`) VALUES ('3', 'Русский');
 
 INSERT INTO `adcom`.`certificate` (`certificate_id`, `user_id`, `subject_id`, `date_of_issue`, `point`) VALUES ('1231231', '3', '1', '2017-10-20', '75');
 INSERT INTO `adcom`.`certificate` (`certificate_id`, `user_id`, `subject_id`, `date_of_issue`, `point`) VALUES ('1231321', '3', '2', '2017-10-24', '23');
