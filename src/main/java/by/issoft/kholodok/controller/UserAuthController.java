@@ -1,7 +1,6 @@
 package by.issoft.kholodok.controller;
 
 import by.issoft.kholodok.controller.command.auth.UpdateUserAuthCommand;
-import by.issoft.kholodok.controller.mapper.auth.UpdateUserAuthMapper;
 import by.issoft.kholodok.exception.RoleServiceException;
 import by.issoft.kholodok.model.role.Role;
 import by.issoft.kholodok.service.RoleService;
@@ -16,7 +15,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
@@ -27,16 +32,13 @@ public class UserAuthController {
     private static final Logger LOGGER = LogManager.getLogger(UserAuthController.class);
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private RoleService roleService;
 
     @Autowired
-    private UserAuthService userAuthService;
+    private UserService userService;
 
     @Autowired
-    private UpdateUserAuthMapper userAuthMapper;
+    private UserAuthService userAuthService;
 
     @PutMapping(value = "{id}")
     public ResponseEntity<Void> updateUserAuth(
@@ -65,8 +67,8 @@ public class UserAuthController {
                             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
                         }
                     }
-                    UserAuth userAuth = userAuthMapper.toUserAuth(command);
-                    userAuthService.updateUserAuth(userAuth);
+                    UserAuth currUserAuth = userAuthService.findById(id);
+                    userAuthService.updateUserAuth(currUserAuth, command);
                     responseEntity = new ResponseEntity<>(HttpStatus.OK);
                 } else {
                     responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);

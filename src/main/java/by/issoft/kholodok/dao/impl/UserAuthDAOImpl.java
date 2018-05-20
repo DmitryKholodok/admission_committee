@@ -31,4 +31,10 @@ public class UserAuthDAOImpl implements UserAuthDAO {
     public void update(UserAuth userAuthData) {
         sessionFactory.getCurrentSession().update(userAuthData);
     }
+
+    @Override
+    @Transactional
+    public UserAuth findById(int id) {
+        return sessionFactory.getCurrentSession().get(UserAuth.class, new Integer(id));
+    }
 }

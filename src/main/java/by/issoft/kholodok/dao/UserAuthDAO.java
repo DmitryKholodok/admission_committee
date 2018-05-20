@@ -6,5 +6,5 @@ public interface UserAuthDAO {
 
     UserAuth findByLogin(String login);
     void update(UserAuth userAuthData);
-
+    UserAuth findById(int id);
 }
