@@ -172,6 +172,7 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    @PostMapping(value = "/delete")
     public ResponseEntity<Void> deleteUsersByIds(@RequestBody @Valid DeleteUsersByIdsCommand command) {
         ResponseEntity<Void> responseEntity;
         try {
