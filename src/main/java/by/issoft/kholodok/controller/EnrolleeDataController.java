@@ -1,8 +1,9 @@
 package by.issoft.kholodok.controller;
 
-import by.issoft.kholodok.controller.command.CreateEnrolleeDataCommand;
-import by.issoft.kholodok.controller.command.UpdateEnrolleeDataCommand;
-import by.issoft.kholodok.controller.command.mapper.UpdateEnrolleeDataMapper;
+import by.issoft.kholodok.controller.command.enrollee.CreateEnrolleeDataCommand;
+import by.issoft.kholodok.controller.command.enrollee.UpdateEnrolleeDataCommand;
+import by.issoft.kholodok.controller.mapper.enrollee.AddEnrolleeDataMapper;
+import by.issoft.kholodok.controller.mapper.enrollee.UpdateEnrolleeDataMapper;
 import by.issoft.kholodok.exception.BadUserRoleException;
 import by.issoft.kholodok.exception.EnrolleeDataServiceException;
 import by.issoft.kholodok.exception.RoleServiceException;
@@ -10,6 +11,7 @@ import by.issoft.kholodok.model.role.Role;
 import by.issoft.kholodok.model.EnrolleeData;
 import by.issoft.kholodok.service.EnrolleeDataService;
 import by.issoft.kholodok.service.RoleService;
+import by.issoft.kholodok.service.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,12 @@ public class EnrolleeDataController {
     private EnrolleeDataService enrolleeDataService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
+    private AddEnrolleeDataMapper addEnrolleeDataMapper;
+
+    @Autowired
     private UpdateEnrolleeDataMapper updateEnrolleeDataMapper;
 
     @PutMapping(value = "/{id}")
@@ -54,16 +62,12 @@ public class EnrolleeDataController {
             bindingResult.getAllErrors().forEach(x -> LOGGER.error(x.toString()));
             responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
-            EnrolleeData updatedEnrolleeData = enrolleeDataService.findById(id);
-            if (updatedEnrolleeData == null) {
-                responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            EnrolleeData currEd = enrolleeDataService.findById(id);
+            if (currEd == null) {
+                responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             } else {
-                EnrolleeData enrolleeData = updateEnrolleeDataMapper.toEnrolleeData(command);
-                enrolleeData.setId(id);
-                enrolleeData.getBasicCertificate().setEnrolleeData(enrolleeData);
-                enrolleeData.getSpecialtyEnrollee().setId(id);
-                enrolleeData.getCertificates().forEach(x -> x.setEnrolleeData(enrolleeData));
-                enrolleeDataService.update(enrolleeData);
+                EnrolleeData newEd = updateEnrolleeDataMapper.toEnrolleeData(command);
+                enrolleeDataService.update(currEd, newEd);
                 responseEntity = new ResponseEntity<>(HttpStatus.OK);
             }
         }
@@ -119,9 +123,9 @@ public class EnrolleeDataController {
                 bindingResult.getAllErrors().forEach(x -> LOGGER.error(x.toString()));
                 responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             } else {
-                EnrolleeData enrolleeData = new EnrolleeData();
-                enrolleeData.setId(command.getUserId());
-                enrolleeDataService.save(enrolleeData);
+                EnrolleeData newEd = addEnrolleeDataMapper.toEnrolleeData(command);
+                newEd.getCertificates().forEach(x -> x.setEnrolleeData(newEd));
+                enrolleeDataService.save(newEd);
                 responseEntity = new ResponseEntity<>(HttpStatus.CREATED);
             }
         } catch (EnrolleeDataServiceException e) {

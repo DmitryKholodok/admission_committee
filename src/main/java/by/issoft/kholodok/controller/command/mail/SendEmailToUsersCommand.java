@@ -1,4 +1,4 @@
-package by.issoft.kholodok.controller.command;
+package by.issoft.kholodok.controller.command.mail;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package by.issoft.kholodok.controller.mapper;
+package by.issoft.kholodok.controller.mapper.faculty;
 
 import by.issoft.kholodok.controller.command.faculty.UpdateFacultyCommand;
 import by.issoft.kholodok.model.Faculty;

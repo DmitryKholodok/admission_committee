@@ -2,8 +2,8 @@ package by.issoft.kholodok.controller;
 
 import by.issoft.kholodok.controller.command.faculty.AddSpecialtyCommand;
 import by.issoft.kholodok.controller.command.faculty.UpdateSpecialtyCommand;
-import by.issoft.kholodok.controller.mapper.AddSpecialtyMapper;
-import by.issoft.kholodok.controller.mapper.UpdateSpecialtyMapper;
+import by.issoft.kholodok.controller.mapper.specialty.AddSpecialtyMapper;
+import by.issoft.kholodok.controller.mapper.specialty.UpdateSpecialtyMapper;
 import by.issoft.kholodok.model.Faculty;
 import by.issoft.kholodok.model.Specialty;
 import by.issoft.kholodok.service.UniverService;

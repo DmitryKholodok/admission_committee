@@ -1,6 +1,6 @@
-package by.issoft.kholodok.controller.mapper;
+package by.issoft.kholodok.controller.mapper.user;
 
-import by.issoft.kholodok.controller.command.SignUpCommand;
+import by.issoft.kholodok.controller.command.user.SignUpCommand;
 import by.issoft.kholodok.model.user.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

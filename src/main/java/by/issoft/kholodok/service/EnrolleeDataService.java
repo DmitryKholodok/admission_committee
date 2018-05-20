@@ -7,7 +7,7 @@ import by.issoft.kholodok.model.EnrolleeData;
 public interface EnrolleeDataService {
 
     EnrolleeData findById(int id);
-    void update(EnrolleeData enrolleeData);
+    void update(EnrolleeData currEd, EnrolleeData newEd);
     void remove(EnrolleeData enrolleeData);
     void save(EnrolleeData enrolleeData) throws EnrolleeDataServiceException, BadUserRoleException;
 

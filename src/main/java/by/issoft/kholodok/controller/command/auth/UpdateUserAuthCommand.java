@@ -1,4 +1,4 @@
-package by.issoft.kholodok.controller.command;
+package by.issoft.kholodok.controller.command.auth;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.NotBlank;

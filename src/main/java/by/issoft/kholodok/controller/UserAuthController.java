@@ -1,7 +1,7 @@
 package by.issoft.kholodok.controller;
 
-import by.issoft.kholodok.controller.command.UpdateUserAuthCommand;
-import by.issoft.kholodok.controller.mapper.UpdateUserAuthMapper;
+import by.issoft.kholodok.controller.command.auth.UpdateUserAuthCommand;
+import by.issoft.kholodok.controller.mapper.auth.UpdateUserAuthMapper;
 import by.issoft.kholodok.exception.RoleServiceException;
 import by.issoft.kholodok.model.role.Role;
 import by.issoft.kholodok.service.RoleService;

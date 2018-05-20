@@ -1,4 +1,4 @@
-package by.issoft.kholodok.controller.command;
+package by.issoft.kholodok.controller.command.user;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.Email;
@@ -30,7 +30,7 @@ public class SignUpCommand {
     private String tel;
 
     @NotBlank
-    private String gender;
+    private String genderEnum;
 
     @NotBlank
     private String login;

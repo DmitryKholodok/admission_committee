@@ -24,8 +24,16 @@ import java.util.Date;
 public class BasicCertificate {
 
     @Id
-    @Column(name = "bc_id")
+    @Column(name = "user_id")
     private int id;
+
+    @Column(name = "bc_id")
+    private int bcId;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private EnrolleeData enrolleeData;
 
     @Column(name = "point")
     private int point;
@@ -33,10 +41,5 @@ public class BasicCertificate {
     @Column(name = "date_of_issue")
     @Temporal(value = TemporalType.DATE)
     private Date dateOfIssue;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    @JsonIgnore
-    private EnrolleeData enrolleeData;
 
 }

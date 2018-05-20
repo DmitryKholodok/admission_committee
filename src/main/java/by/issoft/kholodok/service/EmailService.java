@@ -1,7 +1,6 @@
 package by.issoft.kholodok.service;
 
 import by.issoft.kholodok.common.EmailSender;
-import by.issoft.kholodok.controller.command.SendEmailToUsersCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

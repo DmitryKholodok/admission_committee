@@ -1,7 +1,7 @@
 package by.issoft.kholodok.controller;
 
 import by.issoft.kholodok.controller.command.FindUsersByPageAmountCommand;
-import by.issoft.kholodok.controller.command.SendEmailToUsersCommand;
+import by.issoft.kholodok.controller.command.mail.SendEmailToUsersCommand;
 import by.issoft.kholodok.model.user.User;
 import by.issoft.kholodok.service.EmailService;
 //import by.issoft.kholodok.service.TemplateService;

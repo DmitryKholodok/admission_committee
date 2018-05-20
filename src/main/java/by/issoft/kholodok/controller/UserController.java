@@ -1,10 +1,10 @@
 package by.issoft.kholodok.controller;
 
-import by.issoft.kholodok.controller.command.DeleteUsersByIdsCommand;
-import by.issoft.kholodok.controller.command.SignUpCommand;
-import by.issoft.kholodok.controller.command.UpdateUserCommand;
-import by.issoft.kholodok.controller.mapper.SignUpCommandMapper;
-import by.issoft.kholodok.controller.mapper.UpdateUserCommandMapper;
+import by.issoft.kholodok.controller.command.user.DeleteUsersByIdsCommand;
+import by.issoft.kholodok.controller.command.user.SignUpCommand;
+import by.issoft.kholodok.controller.command.user.UpdateUserCommand;
+import by.issoft.kholodok.controller.mapper.user.SignUpCommandMapper;
+import by.issoft.kholodok.controller.mapper.user.UpdateUserCommandMapper;
 import by.issoft.kholodok.exception.RoleServiceException;
 import by.issoft.kholodok.exception.UserServiceException;
 import by.issoft.kholodok.model.role.Role;

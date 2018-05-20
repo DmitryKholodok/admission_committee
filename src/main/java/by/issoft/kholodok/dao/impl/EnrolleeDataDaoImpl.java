@@ -1,6 +1,7 @@
 package by.issoft.kholodok.dao.impl;
 
 import by.issoft.kholodok.dao.EnrolleeDataDao;
+import by.issoft.kholodok.model.Certificate;
 import by.issoft.kholodok.model.EnrolleeData;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,11 @@ public class EnrolleeDataDaoImpl implements EnrolleeDataDao {
     @Override
     public void save(EnrolleeData enrolleeData) {
         sessionFactory.getCurrentSession().persist(enrolleeData);
+    }
+
+    @Override
+    public void remove(Certificate certificate) {
+        sessionFactory.getCurrentSession().remove(certificate);
     }
 
 }

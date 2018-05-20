@@ -31,7 +31,7 @@ public class SpecialtyEnrollee {
     @JsonIgnore
     private EnrolleeData enrolleeData;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "specialty_id")
     private Specialty specialty;
 

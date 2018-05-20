@@ -2,8 +2,8 @@ package by.issoft.kholodok.controller;
 
 import by.issoft.kholodok.controller.command.faculty.AddFacultyCommand;
 import by.issoft.kholodok.controller.command.faculty.UpdateFacultyCommand;
-import by.issoft.kholodok.controller.mapper.AddFacultyMapper;
-import by.issoft.kholodok.controller.mapper.UpdateFacultyMapper;
+import by.issoft.kholodok.controller.mapper.faculty.AddFacultyMapper;
+import by.issoft.kholodok.controller.mapper.faculty.UpdateFacultyMapper;
 import by.issoft.kholodok.model.Faculty;
 import by.issoft.kholodok.service.UniverService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,8 +1,9 @@
-package by.issoft.kholodok.controller.command.model;
+package by.issoft.kholodok.controller.command.enrollee.model;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.Range;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -15,15 +16,17 @@ import java.util.Date;
 public class ValidatedCertificate {
 
     @Min(0)
-    private int id;
+    @NotNull
+    private Integer id;
 
     @Range(max = 100, min = 0)
-    private int point;
+    @NotNull
+    private Integer point;
 
     @NotNull
     private Date dateOfIssue;
 
-    @Min(0)
-    private int subjectId;
+    @Valid
+    private ValidatedSubject subject;
 
 }
