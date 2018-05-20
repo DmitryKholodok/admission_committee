@@ -4,7 +4,7 @@ import by.issoft.kholodok.controller.command.FindUsersByPageAmountCommand;
 import by.issoft.kholodok.controller.command.mail.SendEmailToUsersCommand;
 import by.issoft.kholodok.model.user.User;
 import by.issoft.kholodok.service.EmailService;
-//import by.issoft.kholodok.service.TemplateService;
+import by.issoft.kholodok.service.TemplateService;
 import by.issoft.kholodok.service.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,8 +32,8 @@ public class AdminController {
     @Autowired
     private EmailService emailService;
 
-//    @Autowired
-//    private TemplateService templateService;
+    @Autowired
+    private TemplateService templateService;
 
     private static final Logger LOGGER = LogManager.getLogger(AdminController.class);
 
@@ -70,9 +70,18 @@ public class AdminController {
                 bindingResult.getAllErrors().forEach(x -> LOGGER.error(x.toString()));
                 responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             } else {
-//                templateService.handleBody(command);
-//                responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
-                emailService.notify(command.getFrom(), command.getTo(), command.getSubject(), command.getBody());
+                if (command.getTemplate() == null) {
+                    emailService.notify(command.getFrom(), command.getTo(), command.getSubject(), command.getBody());
+                } else {
+                    List<SendEmailToUsersCommand> commands = templateService.retrieveHandledCommandList(command);
+                    commands.forEach(x -> {
+                        try {
+                            emailService.notify(x.getFrom(), x.getTo(), x.getSubject(), x.getBody());
+                        } catch (MessagingException e) {
+                            LOGGER.error(e);
+                        }
+                    });
+                }
                 responseEntity = new ResponseEntity<>(HttpStatus.OK);
             }
         } catch (MessagingException e) {
