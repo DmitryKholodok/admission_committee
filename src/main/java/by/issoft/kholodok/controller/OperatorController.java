@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -32,15 +33,13 @@ public class OperatorController {
     private static final Logger LOGGER = LogManager.getLogger(OperatorController.class);
 
     @RequestMapping(value = "/users")
-    public ResponseEntity<List<User>> findUsers(@RequestBody @Valid FindUsersByPageAmountCommand command, BindingResult bindingResult) {
+    public ResponseEntity<List<User>> findUsers(
+            @RequestParam int page,
+            @RequestParam int amount) {
         ResponseEntity<List<User>> responseEntity;
-        if (bindingResult.hasErrors()) {
-            bindingResult.getAllErrors().forEach(x -> LOGGER.error(x.toString()));
-            responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } else {
-            List<User> userList = userService.findByRoleAndPageAmount(RoleProvider.getEnrolleeRole(), command);
-            responseEntity = new ResponseEntity<>(userList, HttpStatus.OK);
-        }
+        FindUsersByPageAmountCommand command = new FindUsersByPageAmountCommand(page, amount);
+        List<User> userList = userService.findByRoleAndPageAmount(RoleProvider.getEnrolleeRole(), command);
+        responseEntity = new ResponseEntity<>(userList, HttpStatus.OK);
         return responseEntity;
     }
 
