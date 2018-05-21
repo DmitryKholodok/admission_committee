@@ -16,8 +16,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class UserDAOImpl implements UserDAO {
@@ -81,19 +83,29 @@ public class UserDAOImpl implements UserDAO {
     @Transactional
     @Override
     public List<User> findByRoleAndPageAmount(Role role, FindUsersByPageAmountCommand pageAmount) {
-        Query query =
-                sessionFactory.getCurrentSession().createNativeQuery(
-                        "select u.user_id, u.name, u.surname , u.email " +
-                                "from user as u " +
-                                "INNER JOIN user_role as ur " +
-                                "on u.user_id = ur.user_id " +
-                                "INNER JOIN role as r " +
-                                "on ur.role_id = r.role_id " +
-                                "where r.name = '" + role.getName() + "' " +
-                                "ORDER BY u.user_id asc " +
-                                "limit " + calculateOffset(pageAmount) + ", " + pageAmount.getAmount()
-                );
-        return (List<User>) query.getResultList();
+        Query<User> query = sessionFactory.getCurrentSession()
+                .createQuery("from User ");
+        List<User> users =
+                query.getResultList();
+        users = users
+                        .stream()
+                        .filter(x -> x.getUserAuth().getRoleSet()
+                                .stream()
+                                .findFirst()
+                                .get()
+                                .getName().equals(role.getName()))
+                        .collect(Collectors.toList());
+        List<User> res = new ArrayList<>();
+        for(int i = calculateOffset(pageAmount); i < calculateOffset(pageAmount) + pageAmount.getAmount(); i++) {
+            try {
+                User user = users.get(i);
+                res.add(user);
+            } catch (Exception e) {
+                LOGGER.debug(e);
+                break;
+            }
+        }
+        return res;
     }
 
     @Transactional

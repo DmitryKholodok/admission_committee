@@ -13,7 +13,7 @@ public class RoleProvider {
     }
 
     public static Role getEnrolleeRole() {
-        return getRoleImpl(RoleEnum.ADMIN);
+        return getRoleImpl(RoleEnum.ENROLLEE);
     }
 
     private static Role getRoleImpl(RoleEnum roleEnum) {
