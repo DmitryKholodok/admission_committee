@@ -67,7 +67,7 @@ public class UniverDao {
         return sessionFactory.getCurrentSession().get(Specialty.class, new Integer(id));
     }
 
-    public List<Faculty> retrieveSpecialtiesById(int facultyId) {
+    public List<Specialty> retrieveSpecialtiesById(int facultyId) {
         return sessionFactory.getCurrentSession()
                 .createQuery("from Specialty as sp " +
                         "where sp.faculty.id=" + facultyId)

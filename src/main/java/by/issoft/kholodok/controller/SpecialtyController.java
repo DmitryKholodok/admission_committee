@@ -69,7 +69,7 @@ public class SpecialtyController {
     }
 
     @GetMapping(value = "/faculties/{facultyId}/specialties")
-    public List<Faculty> retrieveSpecialtiesByFacultyId(@PathVariable int facultyId) {
+    public List<Specialty> retrieveSpecialtiesByFacultyId(@PathVariable int facultyId) {
         return univerService.retrieveSpecialtiesById(facultyId);
     }
 

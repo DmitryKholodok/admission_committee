@@ -59,7 +59,7 @@ public class UniverService {
         return univerDao.retrieveSpecialtyById(id);
     }
 
-    public List<Faculty> retrieveSpecialtiesById(int facultyId) {
+    public List<Specialty> retrieveSpecialtiesById(int facultyId) {
         return univerDao.retrieveSpecialtiesById(facultyId);
     }
 }
