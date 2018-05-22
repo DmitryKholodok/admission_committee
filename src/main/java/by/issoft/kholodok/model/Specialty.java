@@ -29,7 +29,7 @@ public class Specialty {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "faculty_id")
     @JsonIgnore
     private Faculty faculty;

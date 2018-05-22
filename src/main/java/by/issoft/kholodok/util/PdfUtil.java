@@ -18,6 +18,7 @@ import java.io.IOException;
 /**
  * Created by dmitrykholodok on 5/17/18
  */
+
 public class PdfUtil {
 
     public static final String FONT = "11835.ttf";
@@ -29,8 +30,16 @@ public class PdfUtil {
     public static Font textFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, 14, BaseColor.BLACK);
 
     public static void addTitle(Document document, String text) throws DocumentException {
-        Font titleFont = FontFactory.getFont(FontFactory.TIMES_BOLD, 24, BaseColor.BLACK);
-        Paragraph title = new Paragraph(text, titleFont);
+        BaseFont bf = null;
+        try {
+            bf = BaseFont.createFont(FONT, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Font font = new Font(bf, 24, Font.BOLD);
+        Paragraph title = new Paragraph(text, font);
         title.setSpacingAfter(10f);
         title.setAlignment(Element.ALIGN_CENTER);
         document.add(title);
@@ -107,7 +116,6 @@ public class PdfUtil {
             table.addCell(cell);
         }
     }
-
 
     public static PdfPCell CreateCell( int horizontalAlignment, String rowCell){
         BaseFont bf = null;

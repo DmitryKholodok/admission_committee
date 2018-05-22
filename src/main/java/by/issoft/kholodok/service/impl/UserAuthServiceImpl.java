@@ -31,7 +31,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     @Override
     public void updateUserAuth(UserAuth currUserAuth, UpdateUserAuthCommand command) {
         currUserAuth.setPassword(passwordEncoder.encode(command.getPassword()));
-        currUserAuth.setLogin(command.getLogin());
+        //currUserAuth.setLogin(command.getLogin());
         userAuthDAO.update(currUserAuth);
     }
 

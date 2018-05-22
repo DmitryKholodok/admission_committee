@@ -4,6 +4,7 @@ import by.issoft.kholodok.controller.command.mail.SendEmailToUsersCommand;
 import by.issoft.kholodok.controller.command.mail.TemplateEnum;
 import by.issoft.kholodok.model.Certificate;
 import by.issoft.kholodok.model.EnrolleeData;
+import by.issoft.kholodok.model.Specialty;
 import by.issoft.kholodok.model.user.GenderEnum;
 import by.issoft.kholodok.model.user.User;
 import org.apache.logging.log4j.LogManager;
@@ -26,6 +27,9 @@ public class TemplateService {
     private static final Logger LOGGER = LogManager.getLogger(TemplateService.class);
 
     private static final String ENTER = "<br>";
+    private static final String ZHIR_START = "<b>";
+    private static final String ZHIR_FINISH = "</b>";
+
 
     @Autowired
     private UserService userService;
@@ -45,9 +49,9 @@ public class TemplateService {
                         if (user != null) {
                             String body;
                             if (user.getGenderEnum().equals(GenderEnum.M)) {
-                                body = "Уважаемый " + user.getName() + " " + user.getSurname() + "!" + ENTER;
+                                body = "Уважаемый " + ZHIR_START + user.getName() + " " + user.getSurname() + "!" + ZHIR_FINISH + ENTER;
                             } else {
-                                body = "Уважаемая " + user.getName() + " " + user.getSurname() + "!" + ENTER;
+                                body = "Уважаемая " + ZHIR_START + user.getName() + " " + user.getSurname() + "!" + ZHIR_FINISH + ENTER;
                             }
                             body += command.getBody() + ENTER;
                             body += "Kind Regards, " + ENTER +
@@ -81,7 +85,9 @@ public class TemplateService {
                                 }
                                 bodyOperator += command.getBody() + ENTER;
                                 bodyOperator += "Ваш general point: " + sumGeneralPoint(enrolleeData) + "." + ENTER;
-                                bodyOperator += "Ваша specialty: " + getSpecialty(enrolleeData) + "." + ENTER;
+                                bodyOperator += "Ваш faculty: " + getSpecialty(enrolleeData).getFaculty().getName() + "." + ENTER;
+                                bodyOperator += "Ваша specialty: " +
+                                        ZHIR_START + getSpecialty(enrolleeData).getName() + ZHIR_FINISH + "." + ENTER;
                                 bodyOperator += "Kind Regards, " + ENTER +
                                         "Your Bsuir-БГУИР-2018 (С).";
                                 SendEmailToUsersCommand resCommand = new SendEmailToUsersCommand();
@@ -110,8 +116,8 @@ public class TemplateService {
         return commands;
     }
 
-    private String getSpecialty(EnrolleeData enrolleeData) {
-        return enrolleeData.getSpecialtyEnrollee().getSpecialty().getName();
+    private Specialty getSpecialty(EnrolleeData enrolleeData) {
+        return enrolleeData.getSpecialtyEnrollee().getSpecialty();
     }
 
     private String sumGeneralPoint(EnrolleeData enrolleeData) {

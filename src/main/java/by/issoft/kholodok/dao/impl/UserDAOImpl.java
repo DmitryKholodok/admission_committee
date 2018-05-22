@@ -40,8 +40,10 @@ public class UserDAOImpl implements UserDAO {
 
     @Transactional
     @Override
-    public Collection<User> findAll() {
-        return null;
+    public List<User> findAll() {
+        Query<User> query = sessionFactory.getCurrentSession()
+                .createQuery("from User ");
+        return query.list();
     }
 
     @Transactional

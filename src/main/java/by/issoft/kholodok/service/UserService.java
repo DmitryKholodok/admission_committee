@@ -25,4 +25,5 @@ public interface UserService {
     User findByEmail(String email);
     User retrieveCurrentUser(Authentication authentication);
     void deleteByIds(int[] ids);
+    List<User> findAll();
 }

@@ -1,7 +1,9 @@
 package by.issoft.kholodok.service.docs.impl;
 
-import by.issoft.kholodok.model.Faculty;
-import by.issoft.kholodok.service.UniverService;
+import by.issoft.kholodok.model.Certificate;
+import by.issoft.kholodok.model.EnrolleeData;
+import by.issoft.kholodok.model.user.User;
+import by.issoft.kholodok.service.EnrolleeDataService;
 import by.issoft.kholodok.service.docs.AdmissionCommitteeDocs;
 import by.issoft.kholodok.service.docs.ImageBackgroundHelper;
 import by.issoft.kholodok.util.ExcelUtil;
@@ -20,35 +22,33 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.nio.charset.Charset;
 import java.security.Security;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.*;
 
 /**
- * Created by dmitrykholodok on 5/13/18
+ * Created by dmitrykholodok on 5/21/18
  */
 
 @Service
-@Qualifier(value = "specialty")
-@Transactional
-public class SpecialtyStatService implements AdmissionCommitteeDocs {
+@Qualifier(value = "userDataStat")
+public class UserDataStatService implements AdmissionCommitteeDocs<User> {
 
     @Autowired
-    private UniverService univerService;
+    private EnrolleeDataService enrolleeDataService;
 
-    private static final String[] HEADERS = { "SPECIALTY", "FACULTY_РУССКИЙ", "BUDGETARY PLACE COUNT", "CHARGEABLE PLACE COUNT" };
+    private static final String[] HEADERS = { "NAME", "SURNAME", "TEL", "DATE OF BIRTH", "POINT" };
 
     @Override
-    public ByteArrayOutputStream csv(Object key) throws IOException {
+    public ByteArrayOutputStream csv(User key) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Writer writer = new OutputStreamWriter(outputStream, "UTF-8");
         CSVWriter csvWriter = new CSVWriter(writer,
@@ -57,14 +57,14 @@ public class SpecialtyStatService implements AdmissionCommitteeDocs {
                 CSVWriter.DEFAULT_ESCAPE_CHARACTER,
                 CSVWriter.DEFAULT_LINE_END);
         csvWriter.writeNext(HEADERS);
-        retrieveTargetRows().forEach(x -> csvWriter.writeNext(x));
+        csvWriter.writeNext(retrieveTargetRows(key));
         csvWriter.flush();
         csvWriter.close();
         return outputStream;
     }
 
     @Override
-    public ByteArrayOutputStream pdf(Object key) throws IOException {
+    public ByteArrayOutputStream pdf(User user) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Document document = new Document();
         try {
@@ -79,21 +79,19 @@ public class SpecialtyStatService implements AdmissionCommitteeDocs {
             image.setAbsolutePosition(0, 0);
             writer.setPageEvent(new ImageBackgroundHelper(image));
 
-            PdfUtil.addTitle(document, "BSUIR-2018");
+            PdfUtil.addTitle(document, "Данные enrollee:");
 
             PdfPTable userTable = new PdfPTable(1);
             userTable.setWidths(new int[]{ 1 });
-            PdfUtil.addTableHeader(userTable, Element.ALIGN_LEFT, "");
-            List<Faculty> faculties = univerService.retrieveFaculties();
-            faculties.forEach(x -> {
-                x.getSpecialtySet().forEach(y -> {
-                    PdfUtil.addCell(userTable, Element.ALIGN_LEFT, "Faculty Факультет: "  + x.getName());
-                    PdfUtil.addCell(userTable, Element.ALIGN_LEFT, "Specialty:" + y.getName());
-                    PdfUtil.addCell(userTable, Element.ALIGN_LEFT, "Budgetary place count: " + Integer.toString(y.getBudgetaryPlaceCount()));
-                    PdfUtil.addCell(userTable, Element.ALIGN_LEFT, "Chargeable place count: " + Integer.toString(y.getChargeablePlaceCount()));
-                    PdfUtil.addTableRow(userTable, Element.ALIGN_LEFT, " ");
-                    });
-                });
+            PdfUtil.addTableHeader(userTable, Element.ALIGN_CENTER, "");
+
+            PdfUtil.addCell(userTable, Element.ALIGN_CENTER, "Имя : "  + user.getName());
+            PdfUtil.addCell(userTable, Element.ALIGN_CENTER, "Фамилия : " + user.getSurname());
+            PdfUtil.addCell(userTable, Element.ALIGN_CENTER, "Tel : " + user.getTel());
+            PdfUtil.addCell(userTable, Element.ALIGN_CENTER, "Date of birth : " + date(user.getDateOfBirth()));
+            PdfUtil.addCell(userTable, Element.ALIGN_CENTER, "Point : " + calcEnrolleePoint(user));
+            PdfUtil.addTableRow(userTable, Element.ALIGN_CENTER, " ");
+
             document.add(userTable);
             document.close();
             Security.addProvider(new BouncyCastleProvider());
@@ -104,38 +102,58 @@ public class SpecialtyStatService implements AdmissionCommitteeDocs {
         } finally {
             document.close();
         }
-
         return outputStream;
     }
 
     @Override
-    public ByteArrayOutputStream excel(Object key) throws IOException {
+    public ByteArrayOutputStream excel(User user) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet usersInfo = workbook.createSheet("РУССКИйStatistics-2018");
+        XSSFSheet usersInfo = workbook.createSheet("User data");
         java.util.List<Object[]> wardStat = new ArrayList<>();
         wardStat.add(HEADERS);
-        retrieveTargetRows().forEach(x -> wardStat.add(x));
-        ExcelUtil.createTable(usersInfo, wardStat, "Statistics-2018", 1, 1);
+        wardStat.add( retrieveTargetRows(user));
+        ExcelUtil.createTable(usersInfo, wardStat, "User data", 1, 1);
         ExcelUtil.styleTable(workbook, usersInfo);
         workbook.write(outputStream);
         return outputStream;
     }
 
-    private List<String[]> retrieveTargetRows() {
-            List<String[]> result = new ArrayList<>();
-            List<Faculty> faculties = univerService.retrieveFaculties();
-            faculties.forEach(x -> {
-                x.getSpecialtySet().forEach(y -> {
-                    result.add(new String[] {
-                            y.getName(),
-                            x.getName() + " РУССКИЙСРКИСЙКЙЦКЫФАЫВ111111123123123123123123123123123123123123123123123111111123123123123123123123123123123123123123123123111111123123123123123123123123123123123123123123123111111123123123123123123123123123123123123123123123111111123123123123123123123123123123123123123123123111111123123123123123123123123123123123123123123123",
-                            Integer.toString(y.getBudgetaryPlaceCount()),
-                            Integer.toString(y.getChargeablePlaceCount()),
-                    });
-                });
-            });
-            return result;
-        }
-}
+    private String[] retrieveTargetRows(User user) {
+        String userPoint = calcEnrolleePoint(user);
+        return new String[] {
+                        user.getName(),
+                        user.getSurname(),
+                        user.getTel(),
+                        date(user.getDateOfBirth()),
+                        userPoint
+                };
+    }
 
+    private String calcEnrolleePoint(User user) {
+        EnrolleeData enrolleeData = enrolleeDataService.findById(user.getId());
+        if (enrolleeData != null) {
+            int p = 0;
+            Iterator<Certificate> certificateIterator = enrolleeData.getCertificates().iterator();
+            while(certificateIterator.hasNext()) {
+                p += certificateIterator.next().getPoint();
+            }
+            p += enrolleeData.getBasicCertificate().getPoint();
+            return Integer.toString(p);
+        }
+        return "You are not абитуриент!";
+
+    }
+
+    private String date(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        // Set time fields to zero
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTime().toString();
+
+    }
+}

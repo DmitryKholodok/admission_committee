@@ -136,6 +136,11 @@ public class UserServiceImpl implements UserService {
         Arrays.stream(ids).forEach(x -> deleteById(x));
     }
 
+    @Override
+    public List<User> findAll() {
+        return userDAO.findAll();
+    }
+
     private void fillUserWithAuthData(UserAuth userAuth, RoleEnum roleEnum) {
         final Set<Role> userRoleSet = new HashSet<>();
         final Role role = roleDAO.findRoleByName(roleEnum.getValue());
